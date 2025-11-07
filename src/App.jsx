@@ -266,34 +266,34 @@ const ProductOrderSystem = () => {
     // 主背景：使用極深色背景（請確保您的 body 設置了 #0a0a0a 或 bg-black）
     <div className="min-h-screen bg-black text-white p-4">
       <div className="max-w-7xl mx-auto">
-        {/* 頂部總覽卡片 */}
+        {/* 標題區塊：置中 */}
+        <div className="p-4 pb-6 text-center">
+            <h1 className="text-3xl font-extrabold text-white mb-1">嘉城產品訂購系統</h1>
+        </div>
+
+        {/* 頂部總覽卡片 - 使用 glass-card 增加明顯區隔 */}
         <div className="glass-card rounded-3xl shadow-2xl p-6 mb-6">
-          <h1 className="text-2xl font-bold text-white mb-1">嘉城工業股份有限公司</h1>
-          <h2 className="text-lg text-gray-400 mb-4">產品訂購系統 - 象牙色</h2>
           
-          {/* 總計金額區塊 - 採用玻璃卡片風格 */}
-          <div className="glass-card p-4 rounded-2xl mb-5 text-center">
+          {/* 總計金額區塊 - 獨立的玻璃卡片，加強邊框強調 */}
+          <div className="glass-card p-5 rounded-2xl mb-6 text-center border border-blue-400/30">
             <div className="text-sm text-gray-400">應付總額 (含稅)</div>
-            {/* 數字使用藍色漸變效果，模仿範例中的強調色 */}
             <div className="text-4xl font-extrabold text-blue-400">NT$ {calculations.grandTotal.toLocaleString()}</div>
           </div>
 
-          {/* 訂購明細區塊 - 摺疊設計 */}
+          {/* 訂購明細區塊 - 摺疊設計，內建玻璃卡片 */}
           {Object.keys(orders).some(key => orders[key]?.quantity > 0) && (
-            <div className="glass-card rounded-2xl mb-6 overflow-hidden border-none">
+            <div className="glass-card rounded-2xl mb-6 overflow-hidden"> {/* 外框已經有 glass-card */}
               <button
                 onClick={() => setIsDetailOpen(!isDetailOpen)}
-                // 按鈕使用柔和的 glass-button 樣式
-                className="w-full p-4 flex justify-between items-center transition glass-button bg-transparent border-t border-b border-white/10 hover:bg-white/10"
+                // 使用 primary-button-style 的背景，但略微柔和
+                className="w-full p-4 flex justify-between items-center transition bg-white/5 hover:bg-white/10 border-b border-white/10"
               >
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-semibold text-white">訂購明細</h3>
-                  {/* 使用強調色標籤 */}
                   <span className="bg-blue-500/30 text-blue-300 text-xs font-bold px-3 py-1 rounded-full border border-blue-500/50">
                     {Object.keys(orders).filter(key => orders[key]?.quantity > 0).length} 項
                   </span>
                 </div>
-                {/* 箭頭顏色調整 */}
                 <svg 
                   className={`w-6 h-6 text-blue-400 transition-transform ${isDetailOpen ? 'rotate-180' : ''}`} 
                   fill="none" 
@@ -305,8 +305,8 @@ const ProductOrderSystem = () => {
               </button>
               
               {isDetailOpen && (
-                // 明細內容區塊
-                <div className="px-4 py-4 max-h-96 overflow-y-auto bg-black/50">
+                // 明細內容區塊，使用深色背景作為內容區隔
+                <div className="px-4 py-4 max-h-96 overflow-y-auto bg-black/50 space-y-3">
                   {Object.entries(
                     products.reduce((acc, product, index) => {
                       const order = orders[index];
@@ -319,15 +319,14 @@ const ProductOrderSystem = () => {
                       return acc;
                     }, {})
                   ).map(([category, items]) => (
-                    <div key={category} className="mb-4">
-                      {/* 類別標題 */}
+                    <div key={category} className="mt-3">
                       <div className="text-sm font-semibold text-gray-400 mb-2 px-2">{category}</div>
                       <div className="space-y-2">
                         {items.map(({ name, price, order, index }) => {
                           const amount = order.discount > 0 ? order.discount : price * order.quantity;
                           return (
-                            // 單項明細卡片
-                            <div key={index} className="glass-button p-3 rounded-xl border border-white/5 hover:border-blue-400/50">
+                            // 單項明細卡片: 使用 glass-button 樣式作為獨立物件
+                            <div key={index} className="glass-button p-3 rounded-xl hover:border-blue-400/50">
                               <div className="flex justify-between items-start mb-1">
                                 <div className="font-semibold text-white text-base flex-1">{name}</div>
                                 <div className="text-xl font-bold text-blue-400 ml-3">×{order.quantity}</div>
@@ -351,7 +350,6 @@ const ProductOrderSystem = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
               onClick={shareToLine}
-              // 使用自定義漸變樣式
               className="primary-button-style font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-2"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -361,7 +359,6 @@ const ProductOrderSystem = () => {
             </button>
             <button
               onClick={exportToExcel}
-              // 使用 glass-button-style 作為次要/下載按鈕
               className="glass-button font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-2 border border-blue-400/30 hover:bg-white/10"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -372,7 +369,7 @@ const ProductOrderSystem = () => {
           </div>
         </div>
 
-        {/* 商品清單區塊 */}
+        {/* 商品清單主區塊 - 使用 glass-card */}
         <div className="glass-card rounded-3xl shadow-2xl p-6">
           <h3 className="text-xl font-bold text-white mb-4">商品清單</h3>
           
@@ -380,8 +377,8 @@ const ProductOrderSystem = () => {
             <div key={category} className="mb-4">
               <button
                 onClick={() => toggleCategory(category)}
-                // 類別標題按鈕，使用 glass-button 柔和背景
-                className="w-full flex justify-between items-center text-base font-semibold text-white glass-button p-4 rounded-2xl mb-3 transition"
+                // 類別標題按鈕，使用 glass-button 作為獨立元件
+                className="w-full flex justify-between items-center text-base font-semibold text-white glass-button p-4 rounded-2xl mb-3 transition hover:border-white/20"
               >
                 <span className="text-blue-400">{category}</span>
                 <svg 
@@ -395,14 +392,15 @@ const ProductOrderSystem = () => {
               </button>
               
               {openCategories[category] && (
+                // 增加 list item 的間距 (space-y-3)
                 <div className="space-y-3">
                   {items.map(({ index, name, color, price, package: pkg }) => {
                     const order = orders[index] || {};
                     const amount = order.quantity ? price * order.quantity : 0;
                     
                     return (
-                      // 單項商品卡片
-                      <div key={index} className="glass-card rounded-xl p-4 border-none hover:border-white/20">
+                      // 單項商品卡片 - 使用 glass-card 類別來提供背景模糊和邊框
+                      <div key={index} className="glass-card rounded-xl p-4 transition-all hover:border-blue-500/50">
                         <div className="flex justify-between items-start mb-3">
                           <div className="flex-1">
                             <div className="font-medium text-white text-lg">{name}</div>
@@ -411,20 +409,19 @@ const ProductOrderSystem = () => {
                           {amount > 0 && (
                             <div className="text-right ml-2">
                               <div className="text-xs text-gray-500">小計</div>
-                              {/* 小計金額使用藍色高亮 */}
                               <div className="font-semibold text-blue-400 text-lg">NT$ {amount.toLocaleString()}</div>
                             </div>
                           )}
                         </div>
                         {/* 數量輸入區塊 */}
                         <div className="flex items-center gap-3 mt-3">
-                          <label className="text-sm text-gray-400 font-medium">訂購數量</label>
+                          <label className="text-sm text-gray-400 font-medium whitespace-nowrap">訂購數量</label>
                           <input
                             type="number"
                             min="0"
                             value={order.quantity || ''}
                             onChange={(e) => handleQuantityChange(index, e.target.value)}
-                            // 輸入框樣式調整為深色玻璃背景，聚焦時使用藍色邊框
+                            // 輸入框使用深色半透明背景
                             className="flex-1 px-4 py-3 bg-black/50 text-white border border-gray-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg font-mono outline-none"
                             placeholder="0"
                           />
@@ -438,11 +435,10 @@ const ProductOrderSystem = () => {
           ))}
         </div>
 
-        {/* 回到頂部按鈕 - 圓形、藍色高光、固定位置 */}
+        {/* 回到頂部按鈕 */}
         {showScrollTop && (
           <button
             onClick={scrollToTop}
-            // 使用 primary-button-style 的圓形按鈕
             className="fixed bottom-6 right-6 p-4 primary-button-style rounded-full shadow-2xl transition-all transform hover:scale-110 z-50 focus:outline-none focus:ring-4 focus:ring-blue-400/50"
             aria-label="回到頂部"
           >
