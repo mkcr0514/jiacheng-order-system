@@ -1,5 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import * as XLSX from 'xlsx';
+// 匯入必要的SVG圖標 (這裡假設您已安裝並設定了類似 Heroicons 或其他圖標庫)
+// 由於 Tailwind CSS 預設不包含這些，我們仍使用內建的 SVG。
+// 如果您想使用更像圖中那樣的實心或獨特圖標，需要額外導入。
 
 const ProductOrderSystem = () => {
   const products = [
@@ -261,31 +264,39 @@ const ProductOrderSystem = () => {
   }, {});
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    // 主背景：深黑色，模擬附圖的暗色背景
+    <div className="min-h-screen bg-black text-gray-100 p-4">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-4 mb-4">
-          <h1 className="text-2xl font-bold text-gray-800 mb-1">嘉城工業股份有限公司</h1>
-          <h2 className="text-lg text-gray-600 mb-4">訂購系統 - 象牙色商品</h2>
+        {/* 頂部總覽卡片 */}
+        <div className="bg-gray-900 rounded-2xl shadow-xl p-5 mb-6 border border-gray-800">
+          <h1 className="text-2xl font-bold text-white mb-1">嘉城工業股份有限公司</h1>
+          <h2 className="text-lg text-gray-400 mb-4">產品訂購系統 - 象牙色</h2>
           
-          <div className="bg-blue-50 p-4 rounded-lg mb-4">
-            <div className="text-sm text-gray-600">總計金額</div>
-            <div className="text-3xl font-bold text-blue-600">NT$ {calculations.total.toLocaleString()}</div>
+          {/* 總計金額區塊 - 採用高光設計 */}
+          <div className="bg-gray-800 p-4 rounded-xl mb-4 border border-cyan-400/30">
+            <div className="text-sm text-gray-400">總計金額 (含稅)</div>
+            {/* 使用青色高亮數字 */}
+            <div className="text-3xl font-extrabold text-cyan-400">NT$ {calculations.grandTotal.toLocaleString()}</div>
           </div>
 
+          {/* 訂購明細區塊 - 摺疊設計，深色背景 */}
           {Object.keys(orders).some(key => orders[key]?.quantity > 0) && (
-            <div className="bg-gray-50 rounded-lg mb-4 overflow-hidden border border-gray-200">
+            <div className="bg-gray-800 rounded-xl mb-4 overflow-hidden border border-gray-700">
               <button
                 onClick={() => setIsDetailOpen(!isDetailOpen)}
-                className="w-full p-4 flex justify-between items-center hover:bg-gray-100 transition bg-white"
+                // 按鈕背景更深，文字更亮
+                className="w-full p-4 flex justify-between items-center hover:bg-gray-700 transition bg-gray-900"
               >
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-semibold text-gray-800">訂購明細</h3>
-                  <span className="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  <h3 className="text-lg font-semibold text-white">訂購明細</h3>
+                  {/* 使用青色標籤 */}
+                  <span className="bg-cyan-600 text-white text-xs font-bold px-2 py-1 rounded-full">
                     {Object.keys(orders).filter(key => orders[key]?.quantity > 0).length} 項
                   </span>
                 </div>
+                {/* 箭頭顏色調整 */}
                 <svg 
-                  className={`w-6 h-6 text-gray-600 transition-transform ${isDetailOpen ? 'rotate-180' : ''}`} 
+                  className={`w-6 h-6 text-cyan-400 transition-transform ${isDetailOpen ? 'rotate-180' : ''}`} 
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
@@ -295,7 +306,8 @@ const ProductOrderSystem = () => {
               </button>
               
               {isDetailOpen && (
-                <div className="px-4 pb-4 max-h-96 overflow-y-auto bg-gray-50">
+                // 明細內容區塊
+                <div className="px-4 pb-4 max-h-96 overflow-y-auto bg-gray-800 border-t border-gray-700">
                   {Object.entries(
                     products.reduce((acc, product, index) => {
                       const order = orders[index];
@@ -308,20 +320,22 @@ const ProductOrderSystem = () => {
                       return acc;
                     }, {})
                   ).map(([category, items]) => (
-                    <div key={category} className="mb-3">
-                      <div className="text-xs font-semibold text-gray-600 mb-1 px-2">{category}</div>
-                      <div className="space-y-1">
+                    <div key={category} className="mb-3 mt-3">
+                      {/* 類別標題 */}
+                      <div className="text-xs font-semibold text-gray-400 mb-1 px-2">{category}</div>
+                      <div className="space-y-2">
                         {items.map(({ name, price, order, index }) => {
                           const amount = order.discount > 0 ? order.discount : price * order.quantity;
                           return (
-                            <div key={index} className="bg-white p-3 rounded border border-gray-200">
+                            // 單項明細卡片
+                            <div key={index} className="bg-gray-900 p-3 rounded-xl border border-gray-700">
                               <div className="flex justify-between items-start mb-1">
-                                <div className="font-semibold text-gray-900 text-base flex-1">{name}</div>
-                                <div className="text-xl font-bold text-blue-600 ml-3">×{order.quantity}</div>
+                                <div className="font-semibold text-white text-base flex-1">{name}</div>
+                                <div className="text-xl font-bold text-cyan-400 ml-3">×{order.quantity}</div>
                               </div>
                               <div className="flex justify-between items-center">
                                 <div className="text-sm text-gray-500">單價 NT$ {price.toLocaleString()}</div>
-                                <div className="font-bold text-gray-900 text-base">NT$ {amount.toLocaleString()}</div>
+                                <div className="font-bold text-white text-base">NT$ {amount.toLocaleString()}</div>
                               </div>
                             </div>
                           );
@@ -334,11 +348,14 @@ const ProductOrderSystem = () => {
             </div>
           )}
 
+          {/* 動作按鈕區塊 - 採用高對比、圓角按鈕 */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
               onClick={shareToLine}
-              className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2"
+              // 分享按鈕使用 LINE 的綠色，但調整為深色背景上的實心效果
+              className="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-lg"
             >
+              {/* LINE 圖標 - 僅為示意，可能需要實際的 LINE SVG */}
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 0C5.373 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652.175 4.218-.632 4.59-4.472 8.237 6.086 0 8.935-3.398 9.876-4.512.702.098 1.426.179 2.124.179 6.627 0 12-4.974 12-11.111C24 4.975 18.627 0 12 0z"/>
               </svg>
@@ -346,7 +363,8 @@ const ProductOrderSystem = () => {
             </button>
             <button
               onClick={exportToExcel}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2"
+              // 下載按鈕使用青色，模擬高光主色
+              className="bg-cyan-600 hover:bg-cyan-500 text-gray-900 font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-lg"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -356,18 +374,20 @@ const ProductOrderSystem = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-4">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">商品清單</h3>
+        {/* 商品清單區塊 */}
+        <div className="bg-gray-900 rounded-2xl shadow-xl p-5">
+          <h3 className="text-xl font-bold text-white mb-4">商品清單</h3>
           
           {Object.entries(groupedProducts).map(([category, items]) => (
             <div key={category} className="mb-4">
               <button
                 onClick={() => toggleCategory(category)}
-                className="w-full flex justify-between items-center text-base font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 p-3 rounded-lg mb-2 transition"
+                // 類別標題按鈕，深色圓角，文字為青色/白色
+                className="w-full flex justify-between items-center text-base font-semibold text-white bg-gray-800 hover:bg-gray-700 p-4 rounded-xl mb-3 transition"
               >
-                <span>{category}</span>
+                <span className="text-cyan-400">{category}</span>
                 <svg 
-                  className={`w-5 h-5 text-gray-600 transition-transform ${openCategories[category] ? 'rotate-180' : ''}`} 
+                  className={`w-5 h-5 text-cyan-400 transition-transform ${openCategories[category] ? 'rotate-180' : ''}`} 
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
@@ -377,36 +397,53 @@ const ProductOrderSystem = () => {
               </button>
               
               {openCategories[category] && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {items.map(({ index, name, color, price, package: pkg }) => {
                     const order = orders[index] || {};
                     const amount = order.quantity ? price * order.quantity : 0;
                     
                     return (
-                      <div key={index} className="border border-gray-200 rounded-lg p-3">
-                        <div className="flex justify-between items-start mb-2">
+                      // 單項商品卡片
+                      <div key={index} className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+                        <div className="flex justify-between items-start mb-3">
                           <div className="flex-1">
-                            <div className="font-medium text-gray-900">{name}</div>
-                            <div className="text-sm text-gray-600">NT$ {price} / {pkg}</div>
+                            <div className="font-medium text-white text-lg">{name}</div>
+                            {/* 價格和包裝資訊使用灰色 */}
+                            <div className="text-sm text-gray-400">NT$ {price} / <span className='text-gray-500'>{pkg}</span></div>
                           </div>
                           {amount > 0 && (
                             <div className="text-right ml-2">
-                              <div className="text-sm text-gray-500">小計</div>
-                              <div className="font-semibold text-blue-600">NT$ {amount.toLocaleString()}</div>
+                              <div className="text-xs text-gray-500">小計</div>
+                              {/* 小計金額使用青色高亮 */}
+                              <div className="font-semibold text-cyan-400 text-lg">NT$ {amount.toLocaleString()}</div>
                             </div>
                           )}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <label className="text-sm text-gray-600 w-20">訂購數量</label>
+                        {/* 數量輸入區塊 */}
+                        <div className="flex items-center gap-3 mt-3">
+                          <label className="text-sm text-gray-400 font-medium">訂購數量</label>
                           <input
                             type="number"
                             min="0"
                             value={order.quantity || ''}
                             onChange={(e) => handleQuantityChange(index, e.target.value)}
-                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            // 輸入框樣式調整為深色背景、亮色文字，聚焦時使用青色邊框
+                            className="flex-1 px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded-lg focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 transition-all text-lg font-mono"
                             placeholder="0"
                           />
                         </div>
+                         {/* 備註：如果要折扣欄位，可以在這裡加上類似的 input group */}
+                         {/* <div className="flex items-center gap-3 mt-2">
+                          <label className="text-sm text-gray-400 font-medium">折扣價 (選填)</label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={order.discount || ''}
+                            onChange={(e) => handleDiscountChange(index, e.target.value)}
+                            className="flex-1 px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded-lg focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 transition-all text-lg font-mono"
+                            placeholder="選填"
+                          />
+                        </div> */}
                       </div>
                     );
                   })}
@@ -416,10 +453,12 @@ const ProductOrderSystem = () => {
           ))}
         </div>
 
+        {/* 回到頂部按鈕 - 圓形、高光、固定位置 */}
         {showScrollTop && (
           <button
             onClick={scrollToTop}
-            className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-all transform hover:scale-110 z-50"
+            // 使用青色圓形按鈕，模擬圖中遙控器的主要按鈕風格
+            className="fixed bottom-6 right-6 bg-cyan-600 hover:bg-cyan-500 text-white p-4 rounded-full shadow-2xl transition-all transform hover:scale-110 z-50 focus:outline-none focus:ring-4 focus:ring-cyan-400/50"
             aria-label="回到頂部"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
