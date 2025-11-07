@@ -1,9 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import * as XLSX from 'xlsx';
-// 匯入必要的SVG圖標 (這裡假設您已安裝並設定了類似 Heroicons 或其他圖標庫)
-// 由於 Tailwind CSS 預設不包含這些，我們仍使用內建的 SVG。
-// 如果您想使用更像圖中那樣的實心或獨特圖標，需要額外導入。
 
+// 產品數據保持不變
 const ProductOrderSystem = () => {
   const products = [
     { category: '管槽(組)', name: 'KL-70', color: '象牙', price: 110, package: '20組一件' },
@@ -81,179 +79,180 @@ const ProductOrderSystem = () => {
   });
   const [showScrollTop, setShowScrollTop] = useState(false);
 
+  // 處理邏輯函數保持不變...
   const handleQuantityChange = (index, value) => {
-    setOrders(prev => ({
-      ...prev,
-      [index]: { ...prev[index], quantity: value === '' ? '' : parseInt(value) || 0 }
-    }));
-  };
-
-  const handleDiscountChange = (index, value) => {
-    setOrders(prev => ({
-      ...prev,
-      [index]: { ...prev[index], discount: value === '' ? '' : parseInt(value) || 0 }
-    }));
-  };
-
-  const toggleCategory = (category) => {
-    setOpenCategories(prev => ({
-      ...prev,
-      [category]: !prev[category]
-    }));
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const calculations = useMemo(() => {
-    let total = 0;
-    let discountTotal = 0;
-    
-    products.forEach((product, index) => {
-      const order = orders[index];
-      if (order && order.quantity > 0) {
-        const amount = product.price * order.quantity;
-        total += amount;
-        if (order.discount > 0) {
-          discountTotal += order.discount;
-        }
-      }
-    });
-
-    const finalTotal = discountTotal > 0 ? discountTotal : total;
-    const tax = Math.round(finalTotal * 0.05);
-    const grandTotal = finalTotal + tax;
-
-    return { total, discountTotal, tax, grandTotal };
-  }, [orders, products]);
-
-  const generateExcelBlob = () => {
-    const wb = XLSX.utils.book_new();
-    
-    const data = [];
-    
-    const today = new Date();
-    const dateStr = `${today.getFullYear()} 年 ${today.getMonth() + 1} 月 ${String(today.getDate()).padStart(2, '0')} 日`;
-    
-    data.push(['嘉城工業股份有限公司', '', '', '', '', '', '', '']);
-    data.push(['新品推出優惠專案 <訂購單>', '', '', '', '', '', '', '']);
-    data.push(['訂購專線：(06)5782904', '', '', `實施日期 ${dateStr}`, '', '', '', '']);
-    data.push(['傳真專線：(06)5782924', '', '', '', '', '', '', '']);
-    data.push(['單位 新台幣', '', '', '台南市山上區新莊里 62號', '', '', '', '']);
-    data.push(['品 名', '型 號', '顏色', '優惠價', '訂購數量', '合計金額', '折扣後金額', '包裝方式']);
-    
-    products.forEach((product, index) => {
-      const order = orders[index];
-      const qty = order?.quantity || '';
-      const amount = qty ? product.price * qty : '';
-      const discount = order?.discount || '';
-      
-      data.push([
-        product.category,
-        product.name,
-        product.color,
-        product.price,
-        qty,
-        amount,
-        discount,
-        product.package
-      ]);
-    });
-    
-    data.push(['◎ 以上報價不含運費、稅金。', '', '', '◎ 訂購金額未達新台幣5000元，運費由客戶支付。', '', '', '', '']);
-    data.push(['◎ 每月25日結帳，26日起計次月帳。', '', '', '◎ 貨款票期：當月結，最長 60天票。', '', '', '', '']);
-    
-    data.push(['總計金額', '折扣價', '稅金', '應收金額', '', '', '', '']);
-    data.push([
-      calculations.total,
-      calculations.discountTotal > 0 ? calculations.discountTotal : '',
-      calculations.tax,
-      calculations.grandTotal,
-      '', '', '', ''
-    ]);
-    
-    data.push(['出貨日期', '', '送貨地址', '', '', '', '', '']);
-    data.push(['客戶 簽章', '', '', '', '', '', '', '']);
-    data.push(['(若未簽回', '', '', '', '', '', '', '']);
-    data.push(['視同確認)', '', '', '', '', '', '', '']);
-    
-    data.push(['出貨日期', '', '', '', '', '', '', '']);
-    data.push(['客戶名稱：', '', '', '', '預定出貨時間', '', '', '']);
-    data.push(['送貨地址：', '', '', '', '', '', '', '']);
-    data.push(['品 名', '型 號', '顏色', '數量', '贈送(支)', '箱', '件', '']);
-    
-    for (let i = 0; i < 10; i++) {
-      data.push(['', '', '', '', '', '', '', '']);
-    }
-    
-    data.push(['出貨日期', '', '', '', '', '', '', '']);
-    data.push(['客戶名稱：', '', '', '', '預定出貨時間', '', '', '']);
-    data.push(['送貨地址：', '', '', '', '', '', '', '']);
-    data.push(['電話：', '', '', '', '', '', '', '']);
-    data.push(['品 名', '型 號', '顏色', '數量', 'BOX', '', '', '']);
-    
-    for (let i = 0; i < 10; i++) {
-      data.push(['', '', '', '', '', '', '', '']);
-    }
-    
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    
-    ws['!cols'] = [
-      { wch: 20 },
-      { wch: 18 },
-      { wch: 8 },
-      { wch: 10 },
-      { wch: 10 },
-      { wch: 12 },
-      { wch: 12 },
-      { wch: 15 }
-    ];
-    
-    XLSX.utils.book_append_sheet(wb, ws, '訂購單');
-    return wb;
-  };
-
-  const exportToExcel = () => {
-    const wb = generateExcelBlob();
-    XLSX.writeFile(wb, `嘉城工業訂購單_${new Date().toISOString().split('T')[0]}.xlsx`);
-  };
-
-  const shareToLine = async () => {
-    const wb = generateExcelBlob();
-    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const fileName = `嘉城工業訂購單_${new Date().toISOString().split('T')[0]}.xlsx`;
-    const file = new File([blob], fileName, { 
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
-    });
-
-    if (navigator.share && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({
-          files: [file],
-          title: '嘉城工業訂購單',
-          text: `訂購金額：NT$ ${calculations.grandTotal.toLocaleString()}`
-        });
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          alert('分享失敗，請使用下載功能後手動分享');
-          exportToExcel();
-        }
-      }
-    } else {
-      alert('您的瀏覽器不支援分享功能，將改為下載檔案');
-      exportToExcel();
-    }
-  };
+     setOrders(prev => ({
+       ...prev,
+       [index]: { ...prev[index], quantity: value === '' ? '' : parseInt(value) || 0 }
+     }));
+   };
+ 
+   const handleDiscountChange = (index, value) => {
+     setOrders(prev => ({
+       ...prev,
+       [index]: { ...prev[index], discount: value === '' ? '' : parseInt(value) || 0 }
+     }));
+   };
+ 
+   const toggleCategory = (category) => {
+     setOpenCategories(prev => ({
+       ...prev,
+       [category]: !prev[category]
+     }));
+   };
+ 
+   const scrollToTop = () => {
+     window.scrollTo({ top: 0, behavior: 'smooth' });
+   };
+ 
+   useEffect(() => {
+     const handleScroll = () => {
+       setShowScrollTop(window.scrollY > 300);
+     };
+     window.addEventListener('scroll', handleScroll);
+     return () => window.removeEventListener('scroll', handleScroll);
+   }, []);
+ 
+   const calculations = useMemo(() => {
+     let total = 0;
+     let discountTotal = 0;
+     
+     products.forEach((product, index) => {
+       const order = orders[index];
+       if (order && order.quantity > 0) {
+         const amount = product.price * order.quantity;
+         total += amount;
+         if (order.discount > 0) {
+           discountTotal += order.discount;
+         }
+       }
+     });
+ 
+     const finalTotal = discountTotal > 0 ? discountTotal : total;
+     const tax = Math.round(finalTotal * 0.05);
+     const grandTotal = finalTotal + tax;
+ 
+     return { total, discountTotal, tax, grandTotal };
+   }, [orders, products]);
+ 
+   const generateExcelBlob = () => {
+     const wb = XLSX.utils.book_new();
+     
+     const data = [];
+     
+     const today = new Date();
+     const dateStr = `${today.getFullYear()} 年 ${today.getMonth() + 1} 月 ${String(today.getDate()).padStart(2, '0')} 日`;
+     
+     data.push(['嘉城工業股份有限公司', '', '', '', '', '', '', '']);
+     data.push(['新品推出優惠專案 <訂購單>', '', '', '', '', '', '', '']);
+     data.push(['訂購專線：(06)5782904', '', '', `實施日期 ${dateStr}`, '', '', '', '']);
+     data.push(['傳真專線：(06)5782924', '', '', '', '', '', '', '']);
+     data.push(['單位 新台幣', '', '', '台南市山上區新莊里 62號', '', '', '', '']);
+     data.push(['品 名', '型 號', '顏色', '優惠價', '訂購數量', '合計金額', '折扣後金額', '包裝方式']);
+     
+     products.forEach((product, index) => {
+       const order = orders[index];
+       const qty = order?.quantity || '';
+       const amount = qty ? product.price * qty : '';
+       const discount = order?.discount || '';
+       
+       data.push([
+         product.category,
+         product.name,
+         product.color,
+         product.price,
+         qty,
+         amount,
+         discount,
+         product.package
+       ]);
+     });
+     
+     data.push(['◎ 以上報價不含運費、稅金。', '', '', '◎ 訂購金額未達新台幣5000元，運費由客戶支付。', '', '', '', '']);
+     data.push(['◎ 每月25日結帳，26日起計次月帳。', '', '', '◎ 貨款票期：當月結，最長 60天票。', '', '', '', '']);
+     
+     data.push(['總計金額', '折扣價', '稅金', '應收金額', '', '', '', '']);
+     data.push([
+       calculations.total,
+       calculations.discountTotal > 0 ? calculations.discountTotal : '',
+       calculations.tax,
+       calculations.grandTotal,
+       '', '', '', ''
+     ]);
+     
+     data.push(['出貨日期', '', '送貨地址', '', '', '', '', '']);
+     data.push(['客戶 簽章', '', '', '', '', '', '', '']);
+     data.push(['(若未簽回', '', '', '', '', '', '', '']);
+     data.push(['視同確認)', '', '', '', '', '', '', '']);
+     
+     data.push(['出貨日期', '', '', '', '', '', '', '']);
+     data.push(['客戶名稱：', '', '', '', '預定出貨時間', '', '', '']);
+     data.push(['送貨地址：', '', '', '', '', '', '', '']);
+     data.push(['品 名', '型 號', '顏色', '數量', '贈送(支)', '箱', '件', '']);
+     
+     for (let i = 0; i < 10; i++) {
+       data.push(['', '', '', '', '', '', '', '']);
+     }
+     
+     data.push(['出貨日期', '', '', '', '', '', '', '']);
+     data.push(['客戶名稱：', '', '', '', '預定出貨時間', '', '', '']);
+     data.push(['送貨地址：', '', '', '', '', '', '', '']);
+     data.push(['電話：', '', '', '', '', '', '', '']);
+     data.push(['品 名', '型 號', '顏色', '數量', 'BOX', '', '', '']);
+     
+     for (let i = 0; i < 10; i++) {
+       data.push(['', '', '', '', '', '', '', '']);
+     }
+     
+     const ws = XLSX.utils.aoa_to_sheet(data);
+     
+     ws['!cols'] = [
+       { wch: 20 },
+       { wch: 18 },
+       { wch: 8 },
+       { wch: 10 },
+       { wch: 10 },
+       { wch: 12 },
+       { wch: 12 },
+       { wch: 15 }
+     ];
+     
+     XLSX.utils.book_append_sheet(wb, ws, '訂購單');
+     return wb;
+   };
+ 
+   const exportToExcel = () => {
+     const wb = generateExcelBlob();
+     XLSX.writeFile(wb, `嘉城工業訂購單_${new Date().toISOString().split('T')[0]}.xlsx`);
+   };
+ 
+   const shareToLine = async () => {
+     const wb = generateExcelBlob();
+     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+     const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+     const fileName = `嘉城工業訂購單_${new Date().toISOString().split('T')[0]}.xlsx`;
+     const file = new File([blob], fileName, { 
+       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+     });
+ 
+     if (navigator.share && navigator.canShare({ files: [file] })) {
+       try {
+         await navigator.share({
+           files: [file],
+           title: '嘉城工業訂購單',
+           text: `訂購金額：NT$ ${calculations.grandTotal.toLocaleString()}`
+         });
+       } catch (error) {
+         if (error.name !== 'AbortError') {
+           alert('分享失敗，請使用下載功能後手動分享');
+           exportToExcel();
+         }
+       }
+     } else {
+       alert('您的瀏覽器不支援分享功能，將改為下載檔案');
+       exportToExcel();
+     }
+   };
 
   const groupedProducts = products.reduce((acc, product, index) => {
     if (!acc[product.category]) {
@@ -264,39 +263,39 @@ const ProductOrderSystem = () => {
   }, {});
 
   return (
-    // 主背景：深黑色，模擬附圖的暗色背景
-    <div className="min-h-screen bg-black text-gray-100 p-4">
+    // 主背景：使用極深色背景（請確保您的 body 設置了 #0a0a0a 或 bg-black）
+    <div className="min-h-screen bg-black text-white p-4">
       <div className="max-w-7xl mx-auto">
         {/* 頂部總覽卡片 */}
-        <div className="bg-gray-900 rounded-2xl shadow-xl p-5 mb-6 border border-gray-800">
+        <div className="glass-card rounded-3xl shadow-2xl p-6 mb-6">
           <h1 className="text-2xl font-bold text-white mb-1">嘉城工業股份有限公司</h1>
           <h2 className="text-lg text-gray-400 mb-4">產品訂購系統 - 象牙色</h2>
           
-          {/* 總計金額區塊 - 採用高光設計 */}
-          <div className="bg-gray-800 p-4 rounded-xl mb-4 border border-cyan-400/30">
-            <div className="text-sm text-gray-400">總計金額 (含稅)</div>
-            {/* 使用青色高亮數字 */}
-            <div className="text-3xl font-extrabold text-cyan-400">NT$ {calculations.grandTotal.toLocaleString()}</div>
+          {/* 總計金額區塊 - 採用玻璃卡片風格 */}
+          <div className="glass-card p-4 rounded-2xl mb-5 text-center">
+            <div className="text-sm text-gray-400">應付總額 (含稅)</div>
+            {/* 數字使用藍色漸變效果，模仿範例中的強調色 */}
+            <div className="text-4xl font-extrabold text-blue-400">NT$ {calculations.grandTotal.toLocaleString()}</div>
           </div>
 
-          {/* 訂購明細區塊 - 摺疊設計，深色背景 */}
+          {/* 訂購明細區塊 - 摺疊設計 */}
           {Object.keys(orders).some(key => orders[key]?.quantity > 0) && (
-            <div className="bg-gray-800 rounded-xl mb-4 overflow-hidden border border-gray-700">
+            <div className="glass-card rounded-2xl mb-6 overflow-hidden border-none">
               <button
                 onClick={() => setIsDetailOpen(!isDetailOpen)}
-                // 按鈕背景更深，文字更亮
-                className="w-full p-4 flex justify-between items-center hover:bg-gray-700 transition bg-gray-900"
+                // 按鈕使用柔和的 glass-button 樣式
+                className="w-full p-4 flex justify-between items-center transition glass-button bg-transparent border-t border-b border-white/10 hover:bg-white/10"
               >
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-semibold text-white">訂購明細</h3>
-                  {/* 使用青色標籤 */}
-                  <span className="bg-cyan-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  {/* 使用強調色標籤 */}
+                  <span className="bg-blue-500/30 text-blue-300 text-xs font-bold px-3 py-1 rounded-full border border-blue-500/50">
                     {Object.keys(orders).filter(key => orders[key]?.quantity > 0).length} 項
                   </span>
                 </div>
                 {/* 箭頭顏色調整 */}
                 <svg 
-                  className={`w-6 h-6 text-cyan-400 transition-transform ${isDetailOpen ? 'rotate-180' : ''}`} 
+                  className={`w-6 h-6 text-blue-400 transition-transform ${isDetailOpen ? 'rotate-180' : ''}`} 
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
@@ -307,7 +306,7 @@ const ProductOrderSystem = () => {
               
               {isDetailOpen && (
                 // 明細內容區塊
-                <div className="px-4 pb-4 max-h-96 overflow-y-auto bg-gray-800 border-t border-gray-700">
+                <div className="px-4 py-4 max-h-96 overflow-y-auto bg-black/50">
                   {Object.entries(
                     products.reduce((acc, product, index) => {
                       const order = orders[index];
@@ -320,21 +319,21 @@ const ProductOrderSystem = () => {
                       return acc;
                     }, {})
                   ).map(([category, items]) => (
-                    <div key={category} className="mb-3 mt-3">
+                    <div key={category} className="mb-4">
                       {/* 類別標題 */}
-                      <div className="text-xs font-semibold text-gray-400 mb-1 px-2">{category}</div>
+                      <div className="text-sm font-semibold text-gray-400 mb-2 px-2">{category}</div>
                       <div className="space-y-2">
                         {items.map(({ name, price, order, index }) => {
                           const amount = order.discount > 0 ? order.discount : price * order.quantity;
                           return (
                             // 單項明細卡片
-                            <div key={index} className="bg-gray-900 p-3 rounded-xl border border-gray-700">
+                            <div key={index} className="glass-button p-3 rounded-xl border border-white/5 hover:border-blue-400/50">
                               <div className="flex justify-between items-start mb-1">
                                 <div className="font-semibold text-white text-base flex-1">{name}</div>
-                                <div className="text-xl font-bold text-cyan-400 ml-3">×{order.quantity}</div>
+                                <div className="text-xl font-bold text-blue-400 ml-3">×{order.quantity}</div>
                               </div>
                               <div className="flex justify-between items-center">
-                                <div className="text-sm text-gray-500">單價 NT$ {price.toLocaleString()}</div>
+                                <div className="text-sm text-gray-400">單價 NT$ {price.toLocaleString()}</div>
                                 <div className="font-bold text-white text-base">NT$ {amount.toLocaleString()}</div>
                               </div>
                             </div>
@@ -348,14 +347,13 @@ const ProductOrderSystem = () => {
             </div>
           )}
 
-          {/* 動作按鈕區塊 - 採用高對比、圓角按鈕 */}
+          {/* 動作按鈕區塊 - 使用 primary-button-style */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
               onClick={shareToLine}
-              // 分享按鈕使用 LINE 的綠色，但調整為深色背景上的實心效果
-              className="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-lg"
+              // 使用自定義漸變樣式
+              className="primary-button-style font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-2"
             >
-              {/* LINE 圖標 - 僅為示意，可能需要實際的 LINE SVG */}
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 0C5.373 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652.175 4.218-.632 4.59-4.472 8.237 6.086 0 8.935-3.398 9.876-4.512.702.098 1.426.179 2.124.179 6.627 0 12-4.974 12-11.111C24 4.975 18.627 0 12 0z"/>
               </svg>
@@ -363,8 +361,8 @@ const ProductOrderSystem = () => {
             </button>
             <button
               onClick={exportToExcel}
-              // 下載按鈕使用青色，模擬高光主色
-              className="bg-cyan-600 hover:bg-cyan-500 text-gray-900 font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-lg"
+              // 使用 glass-button-style 作為次要/下載按鈕
+              className="glass-button font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-2 border border-blue-400/30 hover:bg-white/10"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -375,19 +373,19 @@ const ProductOrderSystem = () => {
         </div>
 
         {/* 商品清單區塊 */}
-        <div className="bg-gray-900 rounded-2xl shadow-xl p-5">
+        <div className="glass-card rounded-3xl shadow-2xl p-6">
           <h3 className="text-xl font-bold text-white mb-4">商品清單</h3>
           
           {Object.entries(groupedProducts).map(([category, items]) => (
             <div key={category} className="mb-4">
               <button
                 onClick={() => toggleCategory(category)}
-                // 類別標題按鈕，深色圓角，文字為青色/白色
-                className="w-full flex justify-between items-center text-base font-semibold text-white bg-gray-800 hover:bg-gray-700 p-4 rounded-xl mb-3 transition"
+                // 類別標題按鈕，使用 glass-button 柔和背景
+                className="w-full flex justify-between items-center text-base font-semibold text-white glass-button p-4 rounded-2xl mb-3 transition"
               >
-                <span className="text-cyan-400">{category}</span>
+                <span className="text-blue-400">{category}</span>
                 <svg 
-                  className={`w-5 h-5 text-cyan-400 transition-transform ${openCategories[category] ? 'rotate-180' : ''}`} 
+                  className={`w-5 h-5 text-white transition-transform ${openCategories[category] ? 'rotate-180' : ''}`} 
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
@@ -404,18 +402,17 @@ const ProductOrderSystem = () => {
                     
                     return (
                       // 單項商品卡片
-                      <div key={index} className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+                      <div key={index} className="glass-card rounded-xl p-4 border-none hover:border-white/20">
                         <div className="flex justify-between items-start mb-3">
                           <div className="flex-1">
                             <div className="font-medium text-white text-lg">{name}</div>
-                            {/* 價格和包裝資訊使用灰色 */}
                             <div className="text-sm text-gray-400">NT$ {price} / <span className='text-gray-500'>{pkg}</span></div>
                           </div>
                           {amount > 0 && (
                             <div className="text-right ml-2">
                               <div className="text-xs text-gray-500">小計</div>
-                              {/* 小計金額使用青色高亮 */}
-                              <div className="font-semibold text-cyan-400 text-lg">NT$ {amount.toLocaleString()}</div>
+                              {/* 小計金額使用藍色高亮 */}
+                              <div className="font-semibold text-blue-400 text-lg">NT$ {amount.toLocaleString()}</div>
                             </div>
                           )}
                         </div>
@@ -427,23 +424,11 @@ const ProductOrderSystem = () => {
                             min="0"
                             value={order.quantity || ''}
                             onChange={(e) => handleQuantityChange(index, e.target.value)}
-                            // 輸入框樣式調整為深色背景、亮色文字，聚焦時使用青色邊框
-                            className="flex-1 px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded-lg focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 transition-all text-lg font-mono"
+                            // 輸入框樣式調整為深色玻璃背景，聚焦時使用藍色邊框
+                            className="flex-1 px-4 py-3 bg-black/50 text-white border border-gray-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg font-mono outline-none"
                             placeholder="0"
                           />
                         </div>
-                         {/* 備註：如果要折扣欄位，可以在這裡加上類似的 input group */}
-                         {/* <div className="flex items-center gap-3 mt-2">
-                          <label className="text-sm text-gray-400 font-medium">折扣價 (選填)</label>
-                          <input
-                            type="number"
-                            min="0"
-                            value={order.discount || ''}
-                            onChange={(e) => handleDiscountChange(index, e.target.value)}
-                            className="flex-1 px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded-lg focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 transition-all text-lg font-mono"
-                            placeholder="選填"
-                          />
-                        </div> */}
                       </div>
                     );
                   })}
@@ -453,12 +438,12 @@ const ProductOrderSystem = () => {
           ))}
         </div>
 
-        {/* 回到頂部按鈕 - 圓形、高光、固定位置 */}
+        {/* 回到頂部按鈕 - 圓形、藍色高光、固定位置 */}
         {showScrollTop && (
           <button
             onClick={scrollToTop}
-            // 使用青色圓形按鈕，模擬圖中遙控器的主要按鈕風格
-            className="fixed bottom-6 right-6 bg-cyan-600 hover:bg-cyan-500 text-white p-4 rounded-full shadow-2xl transition-all transform hover:scale-110 z-50 focus:outline-none focus:ring-4 focus:ring-cyan-400/50"
+            // 使用 primary-button-style 的圓形按鈕
+            className="fixed bottom-6 right-6 p-4 primary-button-style rounded-full shadow-2xl transition-all transform hover:scale-110 z-50 focus:outline-none focus:ring-4 focus:ring-blue-400/50"
             aria-label="回到頂部"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
