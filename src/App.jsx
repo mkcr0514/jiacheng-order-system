@@ -68,6 +68,7 @@ const ProductOrderSystem = () => {
     { category: '段差接頭', name: 'IFA-100', color: '象牙', price: 150, package: '10組一件' }
   ];
 
+  // 省略未修改的 state 和函數邏輯...
   const [orders, setOrders] = useState({});
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [openCategories, setOpenCategories] = useState(() => {
@@ -79,7 +80,6 @@ const ProductOrderSystem = () => {
   });
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  // 處理邏輯函數保持不變...
   const handleQuantityChange = (index, value) => {
      setOrders(prev => ({
        ...prev,
@@ -135,6 +135,7 @@ const ProductOrderSystem = () => {
      return { total, discountTotal, tax, grandTotal };
    }, [orders, products]);
  
+   // Excel 和分享邏輯函數保持不變...
    const generateExcelBlob = () => {
      const wb = XLSX.utils.book_new();
      
@@ -263,7 +264,7 @@ const ProductOrderSystem = () => {
   }, {});
 
   return (
-    // 主背景：使用極深色背景（請確保您的 body 設置了 #0a0a0a 或 bg-black）
+    // 主背景：使用極深色背景
     <div className="min-h-screen bg-black text-white p-4">
       <div className="max-w-7xl mx-auto">
         {/* 標題區塊：置中 */}
@@ -280,12 +281,36 @@ const ProductOrderSystem = () => {
             <div className="text-4xl font-extrabold text-blue-400">NT$ {calculations.grandTotal.toLocaleString()}</div>
           </div>
 
-          {/* 訂購明細區塊 - 摺疊設計，內建玻璃卡片 */}
+          {/* 動作按鈕區塊 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+             {/* 分享訂單按鈕：設為 primary-button-style (藍色漸變) */}
+            <button
+              onClick={shareToLine}
+              className="primary-button-style font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0C5.373 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652.175 4.218-.632 4.59-4.472 8.237 6.086 0 8.935-3.398 9.876-4.512.702.098 1.426.179 2.124.179 6.627 0 12-4.974 12-11.111C24 4.975 18.627 0 12 0z"/>
+              </svg>
+              分享訂單
+            </button>
+            {/* 下載 Excel 按鈕：使用次要的 glass-button 風格 */}
+            <button
+              onClick={exportToExcel}
+              className="glass-button font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-2 border border-white/20 hover:bg-white/10"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              下載 Excel
+            </button>
+          </div>
+
+          {/* 訂購明細區塊 - 摺疊設計 */}
           {Object.keys(orders).some(key => orders[key]?.quantity > 0) && (
-            <div className="glass-card rounded-2xl mb-6 overflow-hidden"> {/* 外框已經有 glass-card */}
+            <div className="glass-card rounded-2xl overflow-hidden border border-white/10"> 
               <button
                 onClick={() => setIsDetailOpen(!isDetailOpen)}
-                // 使用 primary-button-style 的背景，但略微柔和
+                // 區隔標題，使用略深的玻璃背景
                 className="w-full p-4 flex justify-between items-center transition bg-white/5 hover:bg-white/10 border-b border-white/10"
               >
                 <div className="flex items-center gap-2">
@@ -305,8 +330,8 @@ const ProductOrderSystem = () => {
               </button>
               
               {isDetailOpen && (
-                // 明細內容區塊，使用深色背景作為內容區隔
-                <div className="px-4 py-4 max-h-96 overflow-y-auto bg-black/50 space-y-3">
+                // 明細內容區塊：更深的底色，讓裡面的卡片浮起來
+                <div className="p-4 max-h-96 overflow-y-auto bg-black/70 space-y-4">
                   {Object.entries(
                     products.reduce((acc, product, index) => {
                       const order = orders[index];
@@ -319,14 +344,15 @@ const ProductOrderSystem = () => {
                       return acc;
                     }, {})
                   ).map(([category, items]) => (
-                    <div key={category} className="mt-3">
-                      <div className="text-sm font-semibold text-gray-400 mb-2 px-2">{category}</div>
+                    // 種類區隔
+                    <div key={category} className="border border-gray-700/50 rounded-lg p-3 bg-gray-900/50 shadow-inner">
+                      <div className="text-sm font-semibold text-gray-300 mb-2">{category}</div>
                       <div className="space-y-2">
                         {items.map(({ name, price, order, index }) => {
                           const amount = order.discount > 0 ? order.discount : price * order.quantity;
                           return (
-                            // 單項明細卡片: 使用 glass-button 樣式作為獨立物件
-                            <div key={index} className="glass-button p-3 rounded-xl hover:border-blue-400/50">
+                            // 單項明細卡片: 淺色底、清晰邊框
+                            <div key={index} className="bg-gray-800 p-3 rounded-xl border border-white/10 hover:border-blue-400/50 transition-all">
                               <div className="flex justify-between items-start mb-1">
                                 <div className="font-semibold text-white text-base flex-1">{name}</div>
                                 <div className="text-xl font-bold text-blue-400 ml-3">×{order.quantity}</div>
@@ -345,40 +371,19 @@ const ProductOrderSystem = () => {
               )}
             </div>
           )}
-
-          {/* 動作按鈕區塊 - 使用 primary-button-style */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button
-              onClick={shareToLine}
-              className="primary-button-style font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0C5.373 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652.175 4.218-.632 4.59-4.472 8.237 6.086 0 8.935-3.398 9.876-4.512.702.098 1.426.179 2.124.179 6.627 0 12-4.974 12-11.111C24 4.975 18.627 0 12 0z"/>
-              </svg>
-              分享訂單
-            </button>
-            <button
-              onClick={exportToExcel}
-              className="glass-button font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-2 border border-blue-400/30 hover:bg-white/10"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              下載 Excel
-            </button>
-          </div>
         </div>
 
         {/* 商品清單主區塊 - 使用 glass-card */}
-        <div className="glass-card rounded-3xl shadow-2xl p-6">
+        <div className="glass-card rounded-3xl shadow-2xl p-6 mt-6">
           <h3 className="text-xl font-bold text-white mb-4">商品清單</h3>
           
           {Object.entries(groupedProducts).map(([category, items]) => (
+            // 種類區塊
             <div key={category} className="mb-4">
               <button
                 onClick={() => toggleCategory(category)}
-                // 類別標題按鈕，使用 glass-button 作為獨立元件
-                className="w-full flex justify-between items-center text-base font-semibold text-white glass-button p-4 rounded-2xl mb-3 transition hover:border-white/20"
+                // 類別標題按鈕：使用明顯的 glass-button 樣式
+                className="w-full flex justify-between items-center text-base font-semibold text-white glass-button p-4 rounded-2xl mb-3 transition hover:border-blue-400/50"
               >
                 <span className="text-blue-400">{category}</span>
                 <svg 
@@ -392,15 +397,14 @@ const ProductOrderSystem = () => {
               </button>
               
               {openCategories[category] && (
-                // 增加 list item 的間距 (space-y-3)
-                <div className="space-y-3">
+                <div className="space-y-3 p-2 border-l-2 border-gray-700 ml-1"> {/* 增加左側垂直分隔線 */}
                   {items.map(({ index, name, color, price, package: pkg }) => {
                     const order = orders[index] || {};
                     const amount = order.quantity ? price * order.quantity : 0;
                     
                     return (
-                      // 單項商品卡片 - 使用 glass-card 類別來提供背景模糊和邊框
-                      <div key={index} className="glass-card rounded-xl p-4 transition-all hover:border-blue-500/50">
+                      // 單項商品卡片 - 使用 bg-gray-900 和明顯邊框
+                      <div key={index} className="bg-gray-900 rounded-xl p-4 transition-all border border-white/10 hover:border-blue-500/50">
                         <div className="flex justify-between items-start mb-3">
                           <div className="flex-1">
                             <div className="font-medium text-white text-lg">{name}</div>
