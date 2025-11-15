@@ -634,6 +634,14 @@ const App = () => {
     </div>
   );
 
+  // 獲取購物車中某個商品的數量
+  const getCartQuantity = (productName, color) => {
+    const cartItem = cart.find(item =>
+      item.product.name === productName && item.color === color
+    );
+    return cartItem ? cartItem.quantity : 0;
+  };
+
   // 渲染品项内页
   const renderCategoryPage = () => {
     const products = getCategoryProducts(selectedCategory.id);
@@ -689,6 +697,7 @@ const App = () => {
                     const qty = tempQuantities[product.globalIndex] || 0;
                     const unitSize = getUnitSize(product.package);
                     const subtotal = qty * product.price;
+                    const cartQty = getCartQuantity(product.name, selectedColor);
 
                     return (
                       <div
@@ -719,6 +728,16 @@ const App = () => {
                           >
                             {selectedColor}
                           </div>
+
+                          {/* 購物車已有提示 */}
+                          {cartQty > 0 && (
+                            <div className="mb-3 px-3 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                              <div className="flex items-center gap-2 text-blue-400 text-sm">
+                                <ShoppingCart className="w-4 h-4" />
+                                <span>購物車中已有 {cartQty} 組（{Math.ceil(cartQty / unitSize)} 箱）</span>
+                              </div>
+                            </div>
+                          )}
 
                           {/* 數量調整器 - 重要 */}
                           <div className="flex items-center gap-3">
