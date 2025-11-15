@@ -893,36 +893,15 @@ const App = () => {
           {/* 底部结算 */}
           {cart.length > 0 && (
             <div className="p-4 border-t border-white/10 bg-[#0a0a0a]">
-              <div className="space-y-2 mb-4">
-                {/* 主要信息：总数量和总箱数 */}
-                <div className="flex justify-between text-white text-lg font-bold">
-                  <span>總數量</span>
-                  <span className="text-blue-400">{cartTotalItems}</span>
-                </div>
-                <div className="flex justify-between text-white text-lg font-bold pb-2 border-b border-white/10">
-                  <span>總箱數</span>
-                  <span className="text-blue-400">{cartTotalBoxes} 箱</span>
-                </div>
-                {/* 次要信息：价格 */}
-                <div className="flex justify-between text-gray-400 text-sm">
-                  <span>小計</span>
-                  <span>NT$ {total.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-gray-400 text-sm">
-                  <span>稅金 (5%)</span>
-                  <span>NT$ {tax.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-gray-400 text-sm pt-2 border-t border-white/5">
-                  <span>總計</span>
-                  <span>NT$ {grandTotal.toLocaleString()}</span>
-                </div>
-              </div>
-
               <button
                 onClick={handleConfirmOrder}
                 className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold hover:bg-blue-600 transition-all active:scale-98"
               >
-                確認訂單
+                <div className="flex items-center justify-center gap-4">
+                  <span>總箱數：{cartTotalBoxes} 箱</span>
+                  <span>|</span>
+                  <span>總金額：NT$ {total.toLocaleString()}</span>
+                </div>
               </button>
             </div>
           )}
