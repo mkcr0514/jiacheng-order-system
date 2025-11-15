@@ -222,6 +222,13 @@ const App = () => {
     }
   }, [orderHistory]);
 
+  // 提取包装规格中的单位数量（移到前面，避免引用错误）
+  const getUnitSize = (pkg) => {
+    if (!pkg || typeof pkg !== 'string') return 1;
+    const match = pkg.match(/(\d+)(組|個|支)/);
+    return match ? parseInt(match[1], 10) : 1;
+  };
+
   // 计算购物车总数量和总箱数
   const cartTotalItems = useMemo(() => {
     return cart.reduce((sum, item) => {
@@ -270,13 +277,6 @@ const App = () => {
     });
 
     return products;
-  };
-
-  // 提取包装规格中的单位数量
-  const getUnitSize = (pkg) => {
-    if (!pkg || typeof pkg !== 'string') return 1;
-    const match = pkg.match(/(\d+)(組|個|支)/);
-    return match ? parseInt(match[1], 10) : 1;
   };
 
   // 处理数量变化
