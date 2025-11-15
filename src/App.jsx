@@ -202,6 +202,7 @@ const App = () => {
 
   // 动画状态
   const [flyingItem, setFlyingItem] = useState(null);
+  const [removingItems, setRemovingItems] = useState(new Set());
 
   // 载入历史订单
   useEffect(() => {
@@ -370,7 +371,18 @@ const App = () => {
     if (newQuantity <= 0) {
       // 数量为0时，弹出确认删除
       if (window.confirm(`確定要從購物車移除「${item.product.name} (${item.color})」嗎？`)) {
-        setCart(cart.filter(i => i.id !== itemId));
+        // 触发移除动画
+        setRemovingItems(prev => new Set([...prev, itemId]));
+
+        // 动画完成后移除商品
+        setTimeout(() => {
+          setCart(cart.filter(i => i.id !== itemId));
+          setRemovingItems(prev => {
+            const next = new Set(prev);
+            next.delete(itemId);
+            return next;
+          });
+        }, 400);
       }
     } else {
       setCart(cart.map(i =>
@@ -387,7 +399,18 @@ const App = () => {
     if (!item) return;
 
     if (window.confirm(`確定要從購物車移除「${item.product.name} (${item.color})」嗎？`)) {
-      setCart(cart.filter(i => i.id !== itemId));
+      // 触发移除动画
+      setRemovingItems(prev => new Set([...prev, itemId]));
+
+      // 动画完成后移除商品
+      setTimeout(() => {
+        setCart(cart.filter(i => i.id !== itemId));
+        setRemovingItems(prev => {
+          const next = new Set(prev);
+          next.delete(itemId);
+          return next;
+        });
+      }, 400);
     }
   };
 
@@ -857,7 +880,9 @@ const App = () => {
                     {items.map(item => (
                       <div
                         key={item.id}
-                        className="bg-white/5 rounded-xl p-4 border border-white/10"
+                        className={`bg-white/5 rounded-xl p-4 border border-white/10 transition-all duration-400 ${
+                          removingItems.has(item.id) ? 'animate-remove-item' : ''
+                        }`}
                       >
                         <div className="flex justify-between items-start mb-3">
                           <div className="flex-1">
@@ -1297,8 +1322,34 @@ const App = () => {
           }
         }
 
+        @keyframes remove-item {
+          0% {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            max-height: 500px;
+          }
+          50% {
+            opacity: 0.5;
+            transform: translateX(20px) scale(0.95);
+          }
+          100% {
+            opacity: 0;
+            transform: translateX(100px) scale(0.8);
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+            border-width: 0;
+          }
+        }
+
         .animate-fly-to-cart {
           animation: fly-to-cart 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .animate-remove-item {
+          animation: remove-item 0.4s ease-out forwards;
         }
 
         .animate-slide-in-right {
