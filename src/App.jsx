@@ -136,7 +136,7 @@ const CATEGORIES = [
     id: 'others',
     name: '其他',
     icon: MoreHorizontal,
-    // 其他分类暂时没有照片，使用图标
+    image: '/其他.png',
     subcategories: ['轉接頭(大小頭)', '扭轉接頭', '異徑直接頭', '末端接頭', '軟管固定器', '立面扭轉', '段差接頭']
   }
 ];
