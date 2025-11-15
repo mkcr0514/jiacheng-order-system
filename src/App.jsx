@@ -5,6 +5,7 @@ import {
   Download, Trash2, Share2, History, Home as HomeIcon,
   Package, Wrench, Square, Ruler, Move, ArrowRight, Home as HomeIconAlt, GitBranch, MoreHorizontal
 } from 'lucide-react';
+import { EXCEL_TEMPLATE_PRODUCTS } from './templateProducts.js';
 
 // 完整产品数据（所有颜色共用同样的产品列表，只有颜色属性不同）
 const BASE_PRODUCTS = [
@@ -339,7 +340,7 @@ const App = () => {
     }
   };
 
-  // 生成 Excel（每个颜色一个页签）
+  // 生成 Excel（每个颜色一个页签，严格按照模板格式）
   const generateExcelForOrder = (order) => {
     const wb = XLSX.utils.book_new();
 
@@ -350,59 +351,88 @@ const App = () => {
     COLORS.forEach(color => {
       const data = [];
 
-      // 表头
-      data.push(['嘉城工業股份有限公司', '', '', '', '', '', '', '']);
-      data.push(['新品推出優惠專案 <訂購單>', '', '', '', '', '', '', '']);
-      data.push(['訂購專線：(06)5782904', '', '', `實施日期 ${dateStr}`, '', '', '', '']);
-      data.push(['傳真專線：(06)5782924', '', '', `訂單編號：${order.id}`, '', '', '', '']);
-      data.push(['單位 新台幣', '', '', '台南市山上區新莊里 62號', '', '', '', '']);
-      data.push(['品 名', '型 號', '顏色', '優惠價', '訂購數量', '合計金額', '', '包裝方式']);
+      // 表头（严格按照模板格式，列数29列）
+      data.push(['嘉 城 工 業 股 份 有 限 公 司', '', '', '', '', '新品推出優惠專案 <訂購單>', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+      data.push(['訂購專線：(06)5782904', '', '', '', '', `實施日期  ${dateStr}`, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+      data.push(['傳真專線：(06)5782924', '', '', '單位', '新台幣', '          台南市山上區新莊里 62號', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+      data.push(['品    名', '型    號', '', '顏色', '優惠價', '訂購數量', '合計金額', '折扣後金額', '     包裝方式', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
 
       let colorTotal = 0;
+      const templateProducts = EXCEL_TEMPLATE_PRODUCTS[color] || [];
 
-      // 遍历所有产品
-      BASE_PRODUCTS.forEach(product => {
-        // 查找该产品在当前颜色下的订单项
-        const orderItem = order.items.find(
-          item => item.product.name === product.name && item.color === color
-        );
+      // 遍历模板中该颜色的所有产品
+      templateProducts.forEach(templateProduct => {
+        // 查找订单中匹配的产品
+        // 使用部分匹配：订单中的产品名称可能是"KL-80"，模板中可能是"KL-80 (83公分)"
+        const orderItem = order.items.find(item => {
+          if (item.color !== color) return false;
+
+          // 精确匹配或部分匹配
+          const orderName = item.product.name.trim();
+          const templateModel = templateProduct.model.trim();
+
+          return templateModel === orderName ||
+                 templateModel.startsWith(orderName + ' ') ||
+                 templateModel.startsWith(orderName + '  ');
+        });
 
         const quantity = orderItem ? orderItem.quantity : '';
         const itemTotal = orderItem ? orderItem.price : '';
+        const discountedTotal = orderItem ? 0 : ''; // 折扣后金额
 
         if (orderItem) {
           colorTotal += orderItem.price;
         }
 
+        // 拆分型号（处理包含规格的型号，如"KL-80 (83公分)"）
+        let model1 = templateProduct.model;
+        let model2 = '';
+
+        // 检查是否包含括号
+        const match = templateProduct.model.match(/^(.+?)\s+(\(.+\))$/);
+        if (match) {
+          model1 = match[1];
+          model2 = match[2];
+        }
+
         data.push([
-          product.category,
-          product.name,
+          templateProduct.category,
+          model1,
+          model2,
           color,
-          product.price,
+          templateProduct.price,
           quantity,
           itemTotal,
-          '',
-          product.package
+          discountedTotal,
+          templateProduct.packaging,
+          '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
         ]);
       });
 
-      // 只有当该颜色有订单时才显示税金和总计
+      // 底部总计（只在该颜色有订单时显示）
       if (colorTotal > 0) {
+        data.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        data.push(['◎ 以上報價不含運費、稅金。', '', '', '◎ 訂購金額未達新台幣5000元，運費由客戶支付。', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        data.push(['◎ 每月25日結帳，26日起計次月帳。', '', '', '◎ 貨款票期：當月結，最長 60天票。', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        data.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+
         const tax = Math.round(colorTotal * 0.05);
         const grandTotal = colorTotal + tax;
 
-        data.push(['', '', '', '', '', '', '', '']);
-        data.push(['◎ 以上報價不含運費、稅金。', '', '', '◎ 訂購金額未達新台幣5000元，運費由客戶支付。', '', '', '', '']);
-        data.push(['◎ 每月25日結帳，26日起計次月帳。', '', '', '◎ 貨款票期：當月結，最長 60天票。', '', '', '', '']);
-        data.push(['', '', '', '', '', '', '', '']);
-        data.push(['總計金額', '', '稅金', '', '應收金額', '', '', '']);
-        data.push([colorTotal, '', tax, '', grandTotal, '', '', '']);
+        data.push(['總計金額', '', '稅金', '', '應收金額', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        data.push([colorTotal, '', tax, '', grandTotal, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
       }
 
       const ws = XLSX.utils.aoa_to_sheet(data);
+
+      // 设置列宽（29列）
       ws['!cols'] = [
-        { wch: 20 }, { wch: 18 }, { wch: 8 }, { wch: 10 },
-        { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 15 }
+        { wch: 15 }, { wch: 12 }, { wch: 12 }, { wch: 8 }, { wch: 10 },
+        { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 15 }, { wch: 8 },
+        { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 },
+        { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 },
+        { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 },
+        { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }
       ];
 
       XLSX.utils.book_append_sheet(wb, ws, color);
