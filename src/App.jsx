@@ -8,68 +8,68 @@ import {
 
 // 完整产品数据（所有颜色共用同样的产品列表，只有颜色属性不同）
 const BASE_PRODUCTS = [
-  { category: '管槽(組)', name: 'KL-70', price: 110, package: '20組一件' },
-  { category: '管槽(組)', name: 'KL-80', price: 131, package: '10組一件' },
-  { category: '管槽(組)', name: 'KL-100', price: 210, package: '5組一件' },
-  { category: '管槽(組)', name: 'KL-120', price: 247, package: '5組一件' },
-  { category: '管槽(組)', name: 'KL-140', price: 294, package: '5組一件' },
-  { category: '自由接頭(軟管)', name: 'FA-70 (83公分)', price: 84, package: '10支一件' },
-  { category: '自由接頭(軟管)', name: 'FB-80 (83公分)', price: 105, package: '10支一件' },
-  { category: '自由接頭(軟管)', name: 'FB-80L (120公分)', price: 142, package: '10支一件' },
-  { category: '自由接頭(軟管)', name: 'FB-100 (83公分)', price: 158, package: '10支一件' },
-  { category: '自由接頭(軟管)', name: 'FB-120 (83公分)', price: 168, package: '10支一件' },
-  { category: '自由接頭(軟管)', name: 'FA-140 (100公分)', price: 231, package: '10支一件' },
-  { category: '豪華璧面接頭', name: 'WA-70', price: 58, package: '10組一件' },
-  { category: '簡易壁面接頭', name: 'WA-80', price: 58, package: '10組一件' },
-  { category: '簡易壁面接頭', name: 'WB-80', price: 58, package: '10組一件' },
-  { category: '簡易壁面接頭', name: 'WS-80', price: 58, package: '10組一件' },
-  { category: '簡易壁面接頭', name: 'WA-100', price: 84, package: '10組一件' },
-  { category: '簡易壁面接頭', name: 'WA-120', price: 110, package: '10組一件' },
-  { category: '簡易壁面接頭', name: 'WA-140', price: 131, package: '10組一件' },
-  { category: '平面90°接頭', name: 'KA-70', price: 63, package: '10組一件' },
-  { category: '平面90°接頭', name: 'KA-80', price: 68, package: '10組一件' },
-  { category: '平面90°接頭', name: 'KA-100', price: 116, package: '10組一件' },
-  { category: '平面90°接頭', name: 'KA-120', price: 147, package: '10組一件' },
-  { category: '平面90°接頭', name: 'KA-140', price: 173, package: '10組一件' },
-  { category: '平面45°接頭', name: 'KFA-80', price: 68, package: '10組一件' },
-  { category: '平面45°接頭', name: 'KFA-100', price: 116, package: '10組一件' },
-  { category: '平面45°接頭', name: 'KFA-120', price: 147, package: '10組一件' },
-  { category: '立面90°接頭', name: 'CA-70', price: 63, package: '10組一件' },
-  { category: '立面90°接頭', name: 'CA-80', price: 68, package: '10組一件' },
-  { category: '立面90°接頭', name: 'CA-100', price: 116, package: '10組一件' },
-  { category: '立面90°接頭', name: 'CA-120', price: 147, package: '10組一件' },
-  { category: '立面90°接頭', name: 'CA-140', price: 173, package: '10組一件' },
-  { category: '立面45°接頭', name: 'CFA-80', price: 68, package: '10組一件' },
-  { category: '立面45°接頭', name: 'CFA-100', price: 116, package: '10組一件' },
-  { category: '立面45°接頭', name: 'CFA-120', price: 147, package: '10組一件' },
-  { category: '直接頭', name: 'JA-70', price: 32, package: '10組一件' },
-  { category: '直接頭', name: 'JA-80', price: 32, package: '10組一件' },
-  { category: '直接頭', name: 'JA-100', price: 63, package: '10組一件' },
-  { category: '直接頭', name: 'JA-120', price: 79, package: '10組一件' },
-  { category: '直接頭', name: 'JA-140', price: 89, package: '10組一件' },
-  { category: '天花板接頭(通牆)', name: 'PA-80', price: 79, package: '10組一件' },
-  { category: '天花板接頭(通牆)', name: 'PA-100', price: 95, package: '10組一件' },
-  { category: '天花板接頭(通牆)', name: 'PA-120', price: 116, package: '10組一件' },
-  { category: '天花板接頭(通牆)', name: 'PA-140', price: 137, package: '10組一件' },
-  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-80', price: 116, package: '10組一件' },
-  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-100', price: 158, package: '10組一件' },
-  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-120', price: 179, package: '10組一件' },
-  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-140', price: 221, package: '10組一件' },
-  { category: '轉接頭(大小頭)', name: 'RA-128', price: 68, package: '10組一件' },
+  { category: '管槽(組)', name: 'KL-70', price: 110, package: '20組一箱' },
+  { category: '管槽(組)', name: 'KL-80', price: 131, package: '10組一箱' },
+  { category: '管槽(組)', name: 'KL-100', price: 210, package: '5組一箱' },
+  { category: '管槽(組)', name: 'KL-120', price: 247, package: '5組一箱' },
+  { category: '管槽(組)', name: 'KL-140', price: 294, package: '5組一箱' },
+  { category: '自由接頭(軟管)', name: 'FA-70 (83公分)', price: 84, package: '10支一箱' },
+  { category: '自由接頭(軟管)', name: 'FB-80 (83公分)', price: 105, package: '10支一箱' },
+  { category: '自由接頭(軟管)', name: 'FB-80L (120公分)', price: 142, package: '10支一箱' },
+  { category: '自由接頭(軟管)', name: 'FB-100 (83公分)', price: 158, package: '10支一箱' },
+  { category: '自由接頭(軟管)', name: 'FB-120 (83公分)', price: 168, package: '10支一箱' },
+  { category: '自由接頭(軟管)', name: 'FA-140 (100公分)', price: 231, package: '10支一箱' },
+  { category: '豪華璧面接頭', name: 'WA-70', price: 58, package: '10組一箱' },
+  { category: '簡易壁面接頭', name: 'WA-80', price: 58, package: '10組一箱' },
+  { category: '簡易壁面接頭', name: 'WB-80', price: 58, package: '10組一箱' },
+  { category: '簡易壁面接頭', name: 'WS-80', price: 58, package: '10組一箱' },
+  { category: '簡易壁面接頭', name: 'WA-100', price: 84, package: '10組一箱' },
+  { category: '簡易壁面接頭', name: 'WA-120', price: 110, package: '10組一箱' },
+  { category: '簡易壁面接頭', name: 'WA-140', price: 131, package: '10組一箱' },
+  { category: '平面90°接頭', name: 'KA-70', price: 63, package: '10組一箱' },
+  { category: '平面90°接頭', name: 'KA-80', price: 68, package: '10組一箱' },
+  { category: '平面90°接頭', name: 'KA-100', price: 116, package: '10組一箱' },
+  { category: '平面90°接頭', name: 'KA-120', price: 147, package: '10組一箱' },
+  { category: '平面90°接頭', name: 'KA-140', price: 173, package: '10組一箱' },
+  { category: '平面45°接頭', name: 'KFA-80', price: 68, package: '10組一箱' },
+  { category: '平面45°接頭', name: 'KFA-100', price: 116, package: '10組一箱' },
+  { category: '平面45°接頭', name: 'KFA-120', price: 147, package: '10組一箱' },
+  { category: '立面90°接頭', name: 'CA-70', price: 63, package: '10組一箱' },
+  { category: '立面90°接頭', name: 'CA-80', price: 68, package: '10組一箱' },
+  { category: '立面90°接頭', name: 'CA-100', price: 116, package: '10組一箱' },
+  { category: '立面90°接頭', name: 'CA-120', price: 147, package: '10組一箱' },
+  { category: '立面90°接頭', name: 'CA-140', price: 173, package: '10組一箱' },
+  { category: '立面45°接頭', name: 'CFA-80', price: 68, package: '10組一箱' },
+  { category: '立面45°接頭', name: 'CFA-100', price: 116, package: '10組一箱' },
+  { category: '立面45°接頭', name: 'CFA-120', price: 147, package: '10組一箱' },
+  { category: '直接頭', name: 'JA-70', price: 32, package: '10組一箱' },
+  { category: '直接頭', name: 'JA-80', price: 32, package: '10組一箱' },
+  { category: '直接頭', name: 'JA-100', price: 63, package: '10組一箱' },
+  { category: '直接頭', name: 'JA-120', price: 79, package: '10組一箱' },
+  { category: '直接頭', name: 'JA-140', price: 89, package: '10組一箱' },
+  { category: '天花板接頭(通牆)', name: 'PA-80', price: 79, package: '10組一箱' },
+  { category: '天花板接頭(通牆)', name: 'PA-100', price: 95, package: '10組一箱' },
+  { category: '天花板接頭(通牆)', name: 'PA-120', price: 116, package: '10組一箱' },
+  { category: '天花板接頭(通牆)', name: 'PA-140', price: 137, package: '10組一箱' },
+  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-80', price: 116, package: '10組一箱' },
+  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-100', price: 158, package: '10組一箱' },
+  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-120', price: 179, package: '10組一箱' },
+  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-140', price: 221, package: '10組一箱' },
+  { category: '轉接頭(大小頭)', name: 'RA-128', price: 68, package: '10組一箱' },
   { category: '轉接頭(大小頭)', name: 'RA-1008', price: 63, package: '10組一袋' },
   { category: '轉接頭(大小頭)', name: 'RA-1210', price: 63, package: '10組一袋' },
   { category: '轉接頭(大小頭)', name: 'RA-1412', price: 63, package: '10組一袋' },
-  { category: '轉接頭(大小頭)', name: 'RA-1408', price: 158, package: '10組一件' },
-  { category: '扭轉接頭', name: 'NA-80', price: 95, package: '10組一件' },
-  { category: '扭轉接頭', name: 'NA-120', price: 168, package: '10組一件' },
-  { category: '異徑直接頭', name: 'JB-108', price: 79, package: '10組一件' },
-  { category: '異徑直接頭', name: 'JB-128', price: 95, package: '10組一件' },
-  { category: '異徑直接頭', name: 'JB-1210', price: 116, package: '10組一件' },
-  { category: '末端接頭', name: 'EA-70', price: 32, package: '10組一件' },
-  { category: '末端接頭', name: 'EA-100', price: 68, package: '10組一件' },
-  { category: '軟管固定器', name: 'FS-80', price: 18, package: '30個一件' },
-  { category: '立面扭轉', name: 'CAN-80', price: 90, package: '10組一件' },
-  { category: '段差接頭', name: 'IFA-100', price: 150, package: '10組一件' }
+  { category: '轉接頭(大小頭)', name: 'RA-1408', price: 158, package: '10組一箱' },
+  { category: '扭轉接頭', name: 'NA-80', price: 95, package: '10組一箱' },
+  { category: '扭轉接頭', name: 'NA-120', price: 168, package: '10組一箱' },
+  { category: '異徑直接頭', name: 'JB-108', price: 79, package: '10組一箱' },
+  { category: '異徑直接頭', name: 'JB-128', price: 95, package: '10組一箱' },
+  { category: '異徑直接頭', name: 'JB-1210', price: 116, package: '10組一箱' },
+  { category: '末端接頭', name: 'EA-70', price: 32, package: '10組一箱' },
+  { category: '末端接頭', name: 'EA-100', price: 68, package: '10組一箱' },
+  { category: '軟管固定器', name: 'FS-80', price: 18, package: '30個一箱' },
+  { category: '立面扭轉', name: 'CAN-80', price: 90, package: '10組一箱' },
+  { category: '段差接頭', name: 'IFA-100', price: 150, package: '10組一箱' }
 ];
 
 const COLORS = ['象牙', '咖啡', '白色', '灰色', '黑色'];
@@ -181,9 +181,16 @@ const App = () => {
     }
   }, [orderHistory]);
 
-  // 计算购物车总件数
+  // 计算购物车总数量和总箱数
   const cartTotalItems = useMemo(() => {
     return cart.reduce((sum, item) => sum + item.quantity, 0);
+  }, [cart]);
+
+  const cartTotalBoxes = useMemo(() => {
+    return cart.reduce((sum, item) => {
+      const unitSize = getUnitSize(item.product.package);
+      return sum + Math.ceil(item.quantity / unitSize);
+    }, 0);
   }, [cart]);
 
   // 计算每个分类的订购数量
@@ -273,7 +280,7 @@ const App = () => {
     }, 800);
   };
 
-  // 更新购物车商品数量（按件调整）
+  // 更新购物车商品数量（按箱调整）
   const handleUpdateCartItem = (itemId, delta) => {
     const item = cart.find(i => i.id === itemId);
     if (!item) return;
@@ -502,6 +509,12 @@ const App = () => {
       const product = BASE_PRODUCTS[parseInt(index)];
       return sum + (product.price * qty);
     }, 0);
+    const totalBoxes = Object.entries(tempQuantities).reduce((sum, [key, qty]) => {
+      const [color, index] = key.split('-');
+      const product = BASE_PRODUCTS[parseInt(index)];
+      const unitSize = getUnitSize(product.package);
+      return sum + Math.ceil(qty / unitSize);
+    }, 0);
 
     return (
       <div className="flex flex-col h-screen bg-[#0a0a0a]">
@@ -583,7 +596,7 @@ const App = () => {
 
                           {qty > 0 && (
                             <div className="text-gray-500 text-sm">
-                              {Math.ceil(qty / unitSize)} 件
+                              {Math.ceil(qty / unitSize)} 箱
                             </div>
                           )}
                         </div>
@@ -599,9 +612,12 @@ const App = () => {
         {/* 底部操作栏 */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#0a0a0a] border-t border-white/10">
           <div className="text-white text-center mb-3">
-            <span className="text-gray-400">總計：</span>
+            <span className="text-gray-400">總數量：</span>
             <span className="text-xl font-bold mx-2">{totalQuantity}</span>
-            <span className="text-gray-400">件</span>
+            <span className="mx-2">|</span>
+            <span className="text-gray-400">總箱數：</span>
+            <span className="text-xl font-bold mx-2">{totalBoxes}</span>
+            <span className="text-gray-400">箱</span>
             <span className="mx-2">|</span>
             <span className="text-blue-400 text-xl font-bold">NT$ {totalPrice.toLocaleString()}</span>
           </div>
@@ -655,7 +671,10 @@ const App = () => {
                 </div>
               </div>
               <div className="text-gray-400 text-sm">
-                共 {order.items.reduce((sum, item) => sum + item.quantity, 0)} 件商品
+                共 {order.items.reduce((sum, item) => {
+                  const unitSize = getUnitSize(item.product.package);
+                  return sum + Math.ceil(item.quantity / unitSize);
+                }, 0)} 箱商品
               </div>
             </div>
           ))}
@@ -730,7 +749,7 @@ const App = () => {
                         <div className="min-w-[60px] text-center text-white font-bold">
                           {item.quantity}
                           <div className="text-xs text-gray-400">
-                            {Math.ceil(item.quantity / getUnitSize(item.product.package))} 件
+                            {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱
                           </div>
                         </div>
                         <button
@@ -755,17 +774,27 @@ const App = () => {
           {cart.length > 0 && (
             <div className="p-4 border-t border-white/10 bg-[#0a0a0a]">
               <div className="space-y-2 mb-4">
-                <div className="flex justify-between text-gray-400">
+                {/* 主要信息：总数量和总箱数 */}
+                <div className="flex justify-between text-white text-lg font-bold">
+                  <span>總數量</span>
+                  <span className="text-blue-400">{cartTotalItems}</span>
+                </div>
+                <div className="flex justify-between text-white text-lg font-bold pb-2 border-b border-white/10">
+                  <span>總箱數</span>
+                  <span className="text-blue-400">{cartTotalBoxes} 箱</span>
+                </div>
+                {/* 次要信息：价格 */}
+                <div className="flex justify-between text-gray-400 text-sm">
                   <span>小計</span>
                   <span>NT$ {total.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-gray-400">
+                <div className="flex justify-between text-gray-400 text-sm">
                   <span>稅金 (5%)</span>
                   <span>NT$ {tax.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-white text-lg font-bold pt-2 border-t border-white/10">
+                <div className="flex justify-between text-gray-400 text-sm pt-2 border-t border-white/5">
                   <span>總計</span>
-                  <span className="text-blue-400">NT$ {grandTotal.toLocaleString()}</span>
+                  <span>NT$ {grandTotal.toLocaleString()}</span>
                 </div>
               </div>
 
