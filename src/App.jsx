@@ -446,7 +446,7 @@ const App = () => {
     const wb = generateExcelForOrder(order);
     const orderDate = new Date(order.date);
     const dateStr = `${orderDate.getFullYear()}${String(orderDate.getMonth() + 1).padStart(2, '0')}${String(orderDate.getDate()).padStart(2, '0')}`;
-    XLSX.writeFile(wb, `大金材料_${dateStr}.xlsx`);
+    XLSX.writeFile(wb, `嘉城工業訂購單_大金材料-${dateStr}.xlsx`);
     setShowMoreMenu(false);
   };
 
@@ -457,7 +457,7 @@ const App = () => {
     const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const orderDate = new Date(order.date);
     const dateStr = `${orderDate.getFullYear()}${String(orderDate.getMonth() + 1).padStart(2, '0')}${String(orderDate.getDate()).padStart(2, '0')}`;
-    const fileName = `大金材料_${dateStr}.xlsx`;
+    const fileName = `嘉城工業訂購單_大金材料-${dateStr}.xlsx`;
     const file = new File([blob], fileName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     });
@@ -466,8 +466,8 @@ const App = () => {
       try {
         await navigator.share({
           files: [file],
-          title: '大金材料訂購單',
-          text: `訂購日期：${dateStr}\n訂購金額：NT$ ${order.total.toLocaleString()}`
+          title: '嘉城工業訂購單',
+          text: `客戶：大金材料\n訂購日期：${dateStr}\n訂購金額：NT$ ${order.total.toLocaleString()}`
         });
       } catch (error) {
         if (error.name !== 'AbortError') {
