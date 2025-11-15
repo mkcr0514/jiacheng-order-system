@@ -444,7 +444,9 @@ const App = () => {
   // 下载 Excel
   const handleDownloadExcel = (order) => {
     const wb = generateExcelForOrder(order);
-    XLSX.writeFile(wb, `嘉城工業訂購單_${order.id}.xlsx`);
+    const orderDate = new Date(order.date);
+    const dateStr = `${orderDate.getFullYear()}${String(orderDate.getMonth() + 1).padStart(2, '0')}${String(orderDate.getDate()).padStart(2, '0')}`;
+    XLSX.writeFile(wb, `大金材料_${dateStr}.xlsx`);
     setShowMoreMenu(false);
   };
 
@@ -453,7 +455,9 @@ const App = () => {
     const wb = generateExcelForOrder(order);
     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const fileName = `嘉城工業訂購單_${order.id}.xlsx`;
+    const orderDate = new Date(order.date);
+    const dateStr = `${orderDate.getFullYear()}${String(orderDate.getMonth() + 1).padStart(2, '0')}${String(orderDate.getDate()).padStart(2, '0')}`;
+    const fileName = `大金材料_${dateStr}.xlsx`;
     const file = new File([blob], fileName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     });
@@ -462,8 +466,8 @@ const App = () => {
       try {
         await navigator.share({
           files: [file],
-          title: '嘉城工業訂購單',
-          text: `訂單編號：${order.id}\n訂購金額：NT$ ${order.total.toLocaleString()}`
+          title: '大金材料訂購單',
+          text: `訂購日期：${dateStr}\n訂購金額：NT$ ${order.total.toLocaleString()}`
         });
       } catch (error) {
         if (error.name !== 'AbortError') {
