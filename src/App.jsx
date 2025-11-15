@@ -202,6 +202,7 @@ const App = () => {
 
   // 动画状态
   const [flyingItem, setFlyingItem] = useState(null);
+  const [removingItems, setRemovingItems] = useState(new Set());
 
   // 载入历史订单
   useEffect(() => {
@@ -370,7 +371,18 @@ const App = () => {
     if (newQuantity <= 0) {
       // 数量为0时，弹出确认删除
       if (window.confirm(`確定要從購物車移除「${item.product.name} (${item.color})」嗎？`)) {
-        setCart(cart.filter(i => i.id !== itemId));
+        // 触发移除动画
+        setRemovingItems(prev => new Set([...prev, itemId]));
+
+        // 动画完成后移除商品
+        setTimeout(() => {
+          setCart(cart.filter(i => i.id !== itemId));
+          setRemovingItems(prev => {
+            const next = new Set(prev);
+            next.delete(itemId);
+            return next;
+          });
+        }, 400);
       }
     } else {
       setCart(cart.map(i =>
@@ -387,7 +399,18 @@ const App = () => {
     if (!item) return;
 
     if (window.confirm(`確定要從購物車移除「${item.product.name} (${item.color})」嗎？`)) {
-      setCart(cart.filter(i => i.id !== itemId));
+      // 触发移除动画
+      setRemovingItems(prev => new Set([...prev, itemId]));
+
+      // 动画完成后移除商品
+      setTimeout(() => {
+        setCart(cart.filter(i => i.id !== itemId));
+        setRemovingItems(prev => {
+          const next = new Set(prev);
+          next.delete(itemId);
+          return next;
+        });
+      }, 400);
     }
   };
 
@@ -611,6 +634,14 @@ const App = () => {
     </div>
   );
 
+  // 獲取購物車中某個商品的數量
+  const getCartQuantity = (productName, color) => {
+    const cartItem = cart.find(item =>
+      item.product.name === productName && item.color === color
+    );
+    return cartItem ? cartItem.quantity : 0;
+  };
+
   // 渲染品项内页
   const renderCategoryPage = () => {
     const products = getCategoryProducts(selectedCategory.id);
@@ -666,6 +697,7 @@ const App = () => {
                     const qty = tempQuantities[product.globalIndex] || 0;
                     const unitSize = getUnitSize(product.package);
                     const subtotal = qty * product.price;
+                    const cartQty = getCartQuantity(product.name, selectedColor);
 
                     return (
                       <div
@@ -674,52 +706,72 @@ const App = () => {
                           qty > 0 ? 'border-blue-400/50 bg-white/10' : 'border-white/10'
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1">
-                            <div className="text-white text-lg font-bold mb-1">
-                              {product.name}
-                            </div>
-                            <div className="text-gray-400 text-sm">
-                              NT$ {product.price} / {product.package}
-                            </div>
+                        {/* 優先資訊：規格、顏色、數量 */}
+                        <div className="mb-4">
+                          {/* 規格名稱 - 最重要 */}
+                          <div className="text-white text-xl font-bold mb-2">
+                            {product.name}
                           </div>
 
-                          {subtotal > 0 && (
-                            <div className="text-right ml-3">
-                              <div className="text-xs text-gray-500">小計</div>
-                              <div className="text-blue-400 font-bold text-lg">
-                                NT$ {subtotal.toLocaleString()}
+                          {/* 顏色 - 重要 */}
+                          <div className="inline-block px-3 py-1 rounded-lg text-sm font-bold mb-3"
+                            style={{
+                              backgroundColor:
+                                selectedColor === '象牙' ? '#FFF8DC' :
+                                selectedColor === '咖啡' ? '#8B4513' :
+                                selectedColor === '白色' ? '#FFFFFF' :
+                                selectedColor === '灰色' ? '#808080' :
+                                '#000000',
+                              color:
+                                selectedColor === '白色' || selectedColor === '象牙' ? '#000000' : '#FFFFFF'
+                            }}
+                          >
+                            {selectedColor}
+                          </div>
+
+                          {/* 購物車已有提示 */}
+                          {cartQty > 0 && (
+                            <div className="mb-3 px-3 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                              <div className="flex items-center gap-2 text-blue-400 text-sm">
+                                <ShoppingCart className="w-4 h-4" />
+                                <span>購物車中已有 {cartQty} 組（{Math.ceil(cartQty / unitSize)} 箱）</span>
                               </div>
                             </div>
                           )}
-                        </div>
 
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
+                          {/* 數量調整器 - 重要 */}
+                          <div className="flex items-center gap-3">
                             <button
                               onClick={() => handleQuantityChange(product.globalIndex, -1)}
                               disabled={qty === 0}
-                              className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white disabled:opacity-30 hover:bg-white/10 transition-all active:scale-90"
+                              className="w-12 h-12 rounded-full border-2 border-white/20 flex items-center justify-center text-white disabled:opacity-30 hover:bg-white/10 transition-all active:scale-90"
                             >
-                              −
+                              <span className="text-xl">−</span>
                             </button>
-                            <div className="w-16 text-center text-white text-xl font-bold">
-                              {qty}
+                            <div className="min-w-[80px] text-center">
+                              <div className="text-white text-2xl font-bold">{qty}</div>
+                              <div className="text-xs text-gray-400">數量</div>
                             </div>
                             <button
                               onClick={() => handleQuantityChange(product.globalIndex, 1)}
-                              className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all active:scale-90"
+                              className="w-12 h-12 rounded-full border-2 border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all active:scale-90"
                             >
-                              +
+                              <span className="text-xl">+</span>
                             </button>
                           </div>
+                        </div>
 
-                          {qty > 0 && (
-                            <div className="text-gray-500 text-sm">
+                        {/* 次要資訊：箱數、金額 */}
+                        {qty > 0 && (
+                          <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                            <div className="text-gray-400 text-sm">
                               {Math.ceil(qty / unitSize)} 箱
                             </div>
-                          )}
-                        </div>
+                            <div className="text-gray-400 text-sm">
+                              小計 <span className="text-blue-400 font-medium">NT$ {subtotal.toLocaleString()}</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -731,16 +783,23 @@ const App = () => {
 
         {/* 底部操作栏 */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#0a0a0a] border-t border-white/10">
-          <div className="text-white text-center mb-3">
-            <span className="text-gray-400">總數量：</span>
-            <span className="text-xl font-bold mx-2">{totalQuantity}</span>
-            <span className="mx-2">|</span>
-            <span className="text-gray-400">總箱數：</span>
-            <span className="text-xl font-bold mx-2">{totalBoxes}</span>
-            <span className="text-gray-400">箱</span>
-            <span className="mx-2">|</span>
-            <span className="text-blue-400 text-xl font-bold">NT$ {totalPrice.toLocaleString()}</span>
+          {/* 優先資訊：數量 */}
+          <div className="text-white text-center mb-2">
+            <span className="text-gray-400 text-sm">總數量</span>
+            <span className="text-2xl font-bold mx-2">{totalQuantity}</span>
           </div>
+
+          {/* 次要資訊：箱數、金額 */}
+          <div className="text-center mb-3 flex items-center justify-center gap-4 text-sm">
+            <span className="text-gray-400">
+              總箱數：<span className="text-white font-medium">{totalBoxes}</span> 箱
+            </span>
+            <span className="text-gray-400">|</span>
+            <span className="text-gray-400">
+              金額：<span className="text-blue-400 font-medium">NT$ {totalPrice.toLocaleString()}</span>
+            </span>
+          </div>
+
           <button
             onClick={handleAddToCart}
             disabled={totalQuantity === 0}
@@ -764,40 +823,54 @@ const App = () => {
         </div>
       ) : (
         <div className="space-y-3">
-          {orderHistory.map(order => (
-            <div
-              key={order.id}
-              onClick={() => {
-                setShowOrderDetail(order.id);
-                setCurrentPage('home');
-              }}
-              className="bg-white/5 rounded-xl p-4 border border-white/10 cursor-pointer hover:bg-white/10 transition-all active:scale-98"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <div className="text-white font-bold text-sm">{order.id}</div>
-                  <div className="text-gray-500 text-xs mt-1">
-                    {new Date(order.date).toLocaleString('zh-TW', {
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
+          {orderHistory.map(order => {
+            const totalBoxes = order.items.reduce((sum, item) => {
+              const unitSize = getUnitSize(item.product.package);
+              return sum + Math.ceil(item.quantity / unitSize);
+            }, 0);
+            const totalQuantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
+
+            return (
+              <div
+                key={order.id}
+                onClick={() => {
+                  setShowOrderDetail(order.id);
+                  setCurrentPage('home');
+                }}
+                className="bg-white/5 rounded-xl p-4 border border-white/10 cursor-pointer hover:bg-white/10 transition-all active:scale-98"
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1">
+                    <div className="text-white font-bold text-base mb-1">{order.id}</div>
+                    <div className="text-gray-500 text-xs">
+                      {new Date(order.date).toLocaleString('zh-TW', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </div>
                   </div>
                 </div>
-                <div className="text-blue-400 font-bold text-lg">
-                  NT$ {order.total.toLocaleString()}
+
+                {/* 優先資訊：數量 */}
+                <div className="mb-2">
+                  <span className="text-white font-bold text-lg">數量 {totalQuantity}</span>
+                </div>
+
+                {/* 次要資訊：箱數、金額 */}
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">
+                    {totalBoxes} 箱
+                  </span>
+                  <span className="text-gray-400">
+                    NT$ <span className="text-blue-400 font-medium">{order.total.toLocaleString()}</span>
+                  </span>
                 </div>
               </div>
-              <div className="text-gray-400 text-sm">
-                共 {order.items.reduce((sum, item) => {
-                  const unitSize = getUnitSize(item.product.package);
-                  return sum + Math.ceil(item.quantity / unitSize);
-                }, 0)} 箱商品
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
@@ -837,53 +910,90 @@ const App = () => {
                 <div>購物車是空的</div>
               </div>
             ) : (
-              <div className="space-y-3">
-                {cart.map(item => (
-                  <div
-                    key={item.id}
-                    className="bg-white/5 rounded-xl p-4 border border-white/10"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex-1">
-                        <div className="text-white font-bold">{item.product.name}</div>
-                        <div className="text-gray-400 text-sm mt-1">
-                          {item.color} | NT$ {item.product.price}
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleRemoveCartItem(item.id)}
-                        className="p-2 hover:bg-red-500/20 rounded-lg transition-all"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-400" />
-                      </button>
+              <div className="space-y-6">
+                {/* 按品项分类分组 */}
+                {Object.entries(
+                  cart.reduce((groups, item) => {
+                    const category = item.product.category;
+                    if (!groups[category]) groups[category] = [];
+                    groups[category].push(item);
+                    return groups;
+                  }, {})
+                ).map(([category, items]) => (
+                  <div key={category} className="space-y-3">
+                    {/* 品项标题 */}
+                    <div className="text-blue-400 font-bold text-sm px-2 py-1 bg-blue-500/10 rounded-lg inline-block">
+                      {category}
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleUpdateCartItem(item.id, -1)}
-                          className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
-                        >
-                          −
-                        </button>
-                        <div className="min-w-[60px] text-center text-white font-bold">
-                          {item.quantity}
-                          <div className="text-xs text-gray-400">
+                    {/* 该品项下的商品 */}
+                    {items.map(item => (
+                      <div
+                        key={item.id}
+                        className={`bg-white/5 rounded-xl p-4 border border-white/10 transition-all duration-400 ${
+                          removingItems.has(item.id) ? 'animate-remove-item' : ''
+                        }`}
+                      >
+                        {/* 優先資訊：規格、顏色 */}
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="flex-1">
+                            {/* 規格名稱 - 優先 */}
+                            <div className="text-white font-bold text-xl mb-2">{item.product.name}</div>
+                            {/* 顏色 - 優先 */}
+                            <div className="inline-block px-3 py-1.5 rounded-lg text-base font-bold"
+                              style={{
+                                backgroundColor:
+                                  item.color === '象牙' ? '#FFF8DC' :
+                                  item.color === '咖啡' ? '#8B4513' :
+                                  item.color === '白色' ? '#FFFFFF' :
+                                  item.color === '灰色' ? '#808080' :
+                                  '#000000',
+                                color:
+                                  item.color === '白色' || item.color === '象牙' ? '#000000' : '#FFFFFF'
+                              }}
+                            >
+                              {item.color}
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleRemoveCartItem(item.id)}
+                            className="p-2 hover:bg-red-500/20 rounded-lg transition-all"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-400" />
+                          </button>
+                        </div>
+
+                        {/* 數量調整器 - 優先 */}
+                        <div className="flex items-center gap-3 mb-3">
+                          <button
+                            onClick={() => handleUpdateCartItem(item.id, -1)}
+                            className="w-10 h-10 rounded-full border-2 border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+                          >
+                            <span className="text-lg">−</span>
+                          </button>
+                          <div className="min-w-[70px] text-center">
+                            <div className="text-white font-bold text-2xl">{item.quantity}</div>
+                            <div className="text-xs text-gray-400">數量</div>
+                          </div>
+                          <button
+                            onClick={() => handleUpdateCartItem(item.id, 1)}
+                            className="w-10 h-10 rounded-full border-2 border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+                          >
+                            <span className="text-lg">+</span>
+                          </button>
+                        </div>
+
+                        {/* 次要資訊：箱數、金額 */}
+                        <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                          <div className="text-gray-400 text-sm">
                             {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱
                           </div>
+                          <div className="text-gray-400 text-sm">
+                            NT$ <span className="text-blue-400 font-medium">{item.price.toLocaleString()}</span>
+                          </div>
                         </div>
-                        <button
-                          onClick={() => handleUpdateCartItem(item.id, 1)}
-                          className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
-                        >
-                          +
-                        </button>
                       </div>
-
-                      <div className="text-blue-400 font-bold">
-                        NT$ {item.price.toLocaleString()}
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 ))}
               </div>
@@ -893,36 +1003,15 @@ const App = () => {
           {/* 底部结算 */}
           {cart.length > 0 && (
             <div className="p-4 border-t border-white/10 bg-[#0a0a0a]">
-              <div className="space-y-2 mb-4">
-                {/* 主要信息：总数量和总箱数 */}
-                <div className="flex justify-between text-white text-lg font-bold">
-                  <span>總數量</span>
-                  <span className="text-blue-400">{cartTotalItems}</span>
-                </div>
-                <div className="flex justify-between text-white text-lg font-bold pb-2 border-b border-white/10">
-                  <span>總箱數</span>
-                  <span className="text-blue-400">{cartTotalBoxes} 箱</span>
-                </div>
-                {/* 次要信息：价格 */}
-                <div className="flex justify-between text-gray-400 text-sm">
-                  <span>小計</span>
-                  <span>NT$ {total.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-gray-400 text-sm">
-                  <span>稅金 (5%)</span>
-                  <span>NT$ {tax.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-gray-400 text-sm pt-2 border-t border-white/5">
-                  <span>總計</span>
-                  <span>NT$ {grandTotal.toLocaleString()}</span>
-                </div>
-              </div>
-
               <button
                 onClick={handleConfirmOrder}
                 className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold hover:bg-blue-600 transition-all active:scale-98"
               >
-                確認訂單
+                <div className="flex items-center justify-center gap-4">
+                  <span>總箱數：{cartTotalBoxes} 箱</span>
+                  <span>|</span>
+                  <span>總金額：NT$ {total.toLocaleString()}</span>
+                </div>
               </button>
             </div>
           )}
@@ -1061,22 +1150,37 @@ const App = () => {
                   <div className="text-blue-400 font-bold mb-3">{category}</div>
                   <div className="space-y-3">
                     {items.map(item => (
-                      <div key={item.id} className="bg-white/5 rounded-lg p-3 border border-white/5">
-                        {/* 主要信息：规格、数量、颜色 */}
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-3">
-                            <div className="text-white text-lg font-bold">{item.product.name}</div>
-                            <div className="text-blue-400 text-lg font-bold">× {item.quantity}</div>
-                            <div className="text-gray-300 text-sm px-2 py-1 bg-white/10 rounded">
-                              {item.color}
-                            </div>
+                      <div key={item.id} className="bg-white/5 rounded-lg p-4 border border-white/5">
+                        {/* 優先資訊：規格 */}
+                        <div className="text-white text-xl font-bold mb-2">{item.product.name}</div>
+
+                        {/* 優先資訊：顏色、數量 */}
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="inline-block px-3 py-1.5 rounded-lg text-base font-bold"
+                            style={{
+                              backgroundColor:
+                                item.color === '象牙' ? '#FFF8DC' :
+                                item.color === '咖啡' ? '#8B4513' :
+                                item.color === '白色' ? '#FFFFFF' :
+                                item.color === '灰色' ? '#808080' :
+                                '#000000',
+                              color:
+                                item.color === '白色' || item.color === '象牙' ? '#000000' : '#FFFFFF'
+                            }}
+                          >
+                            {item.color}
                           </div>
+                          <div className="text-white text-xl font-bold">× {item.quantity}</div>
                         </div>
-                        {/* 次要信息：单价、小计 */}
-                        <div className="flex items-center gap-4 text-sm text-gray-400">
-                          <div>單價 NT$ {item.product.price}</div>
-                          <div>|</div>
-                          <div>小計 <span className="text-white font-medium">NT$ {item.price.toLocaleString()}</span></div>
+
+                        {/* 次要資訊：箱數、金額 */}
+                        <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                          <div className="text-gray-400 text-sm">
+                            {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱
+                          </div>
+                          <div className="text-gray-400 text-sm">
+                            NT$ <span className="text-blue-400 font-medium">{item.price.toLocaleString()}</span>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1282,8 +1386,34 @@ const App = () => {
           }
         }
 
+        @keyframes remove-item {
+          0% {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            max-height: 500px;
+          }
+          50% {
+            opacity: 0.5;
+            transform: translateX(20px) scale(0.95);
+          }
+          100% {
+            opacity: 0;
+            transform: translateX(100px) scale(0.8);
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+            border-width: 0;
+          }
+        }
+
         .animate-fly-to-cart {
           animation: fly-to-cart 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .animate-remove-item {
+          animation: remove-item 0.4s ease-out forwards;
         }
 
         .animate-slide-in-right {
