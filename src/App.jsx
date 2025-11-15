@@ -80,6 +80,7 @@ const CATEGORIES = [
     id: 'pipe',
     name: '管槽',
     icon: Package,
+    image: '/管槽.png',  // 使用真实照片
     subcategories: ['管槽(組)']
   },
   {
@@ -413,7 +414,16 @@ const App = () => {
               }}
               className="relative aspect-square bg-white/5 rounded-2xl border border-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-white/10 transition-all active:scale-95"
             >
-              <IconComponent className="w-12 h-12 mb-3 text-blue-400" />
+              {/* 如果有图片就显示图片，否则显示图标 */}
+              {category.image ? (
+                <img
+                  src={category.image}
+                  alt={category.name}
+                  className="w-20 h-20 mb-3 object-contain"
+                />
+              ) : (
+                <IconComponent className="w-12 h-12 mb-3 text-blue-400" />
+              )}
               <div className="text-white text-sm text-center px-2">{category.name}</div>
 
               {orderCount > 0 && (
