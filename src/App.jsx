@@ -184,11 +184,15 @@ const App = () => {
 
   // 计算购物车总数量和总箱数
   const cartTotalItems = useMemo(() => {
-    return cart.reduce((sum, item) => sum + item.quantity, 0);
+    return cart.reduce((sum, item) => {
+      if (!item || typeof item.quantity !== 'number') return sum;
+      return sum + item.quantity;
+    }, 0);
   }, [cart]);
 
   const cartTotalBoxes = useMemo(() => {
     return cart.reduce((sum, item) => {
+      if (!item || !item.product || !item.product.package) return sum;
       const unitSize = getUnitSize(item.product.package);
       return sum + Math.ceil(item.quantity / unitSize);
     }, 0);
@@ -200,6 +204,7 @@ const App = () => {
     if (!category) return 0;
 
     return cart.reduce((sum, item) => {
+      if (!item || !item.product || !item.product.category) return sum;
       if (category.subcategories.includes(item.product.category)) {
         return sum + item.quantity;
       }
