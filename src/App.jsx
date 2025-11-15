@@ -229,6 +229,7 @@ const App = () => {
 
   // 提取包装规格中的单位数量
   const getUnitSize = (pkg) => {
+    if (!pkg || typeof pkg !== 'string') return 1;
     const match = pkg.match(/(\d+)(組|個|支)/);
     return match ? parseInt(match[1], 10) : 1;
   };
@@ -256,7 +257,15 @@ const App = () => {
     Object.entries(tempQuantities).forEach(([key, quantity]) => {
       if (quantity > 0) {
         const [color, index] = key.split('-');
-        const product = { ...BASE_PRODUCTS[parseInt(index)], color };
+        const baseProduct = BASE_PRODUCTS[parseInt(index)];
+
+        // 确保产品存在
+        if (!baseProduct) {
+          console.error(`Product not found for index: ${index}`);
+          return;
+        }
+
+        const product = { ...baseProduct };
 
         itemsToAdd.push({
           id: `${Date.now()}-${Math.random()}`,
@@ -365,11 +374,11 @@ const App = () => {
         // 查找订单中匹配的产品
         // 使用部分匹配：订单中的产品名称可能是"KL-80"，模板中可能是"KL-80 (83公分)"
         const orderItem = order.items.find(item => {
-          if (item.color !== color) return false;
+          if (!item || !item.product || !item.product.name || item.color !== color) return false;
 
           // 精确匹配或部分匹配
           const orderName = item.product.name.trim();
-          const templateModel = templateProduct.model.trim();
+          const templateModel = templateProduct.model ? templateProduct.model.trim() : '';
 
           return templateModel === orderName ||
                  templateModel.startsWith(orderName + ' ') ||
