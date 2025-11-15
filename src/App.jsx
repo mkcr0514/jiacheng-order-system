@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, Component } from 'react';
 import * as XLSX from 'xlsx';
 import {
   Menu, ShoppingCart, X, ArrowLeft, ChevronDown, MoreVertical,
@@ -6,6 +6,46 @@ import {
   Package, Wrench, Square, Ruler, Move, ArrowRight, Home as HomeIconAlt, GitBranch, MoreHorizontal
 } from 'lucide-react';
 import { EXCEL_TEMPLATE_PRODUCTS } from './templateProducts.js';
+
+// 错误边界组件
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('React Error Boundary caught:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+          <div className="bg-red-900/20 border border-red-500 rounded-lg p-6 max-w-lg">
+            <h2 className="text-red-400 text-xl font-bold mb-4">發生錯誤</h2>
+            <p className="text-white mb-4">應用程序遇到了問題。請刷新頁面重試。</p>
+            <pre className="text-xs text-gray-400 bg-black/50 p-3 rounded overflow-auto max-h-40">
+              {this.state.error?.toString()}
+            </pre>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              刷新頁面
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 // 完整产品数据（所有颜色共用同样的产品列表，只有颜色属性不同）
 const BASE_PRODUCTS = [
@@ -257,42 +297,66 @@ const App = () => {
 
   // 加入订单（带动画）
   const handleAddToCart = () => {
-    const itemsToAdd = [];
+    try {
+      const itemsToAdd = [];
 
-    Object.entries(tempQuantities).forEach(([key, quantity]) => {
-      if (quantity > 0) {
-        const [color, index] = key.split('-');
-        const baseProduct = BASE_PRODUCTS[parseInt(index)];
+      Object.entries(tempQuantities).forEach(([key, quantity]) => {
+        if (quantity > 0) {
+          const [color, index] = key.split('-');
+          const indexNum = parseInt(index);
 
-        // 确保产品存在
-        if (!baseProduct) {
-          console.error(`Product not found for index: ${index}`);
-          return;
+          // 检查索引是否有效
+          if (isNaN(indexNum) || indexNum < 0 || indexNum >= BASE_PRODUCTS.length) {
+            console.error(`Invalid product index: ${index}`);
+            return;
+          }
+
+          const baseProduct = BASE_PRODUCTS[indexNum];
+
+          // 确保产品存在且有必要的字段
+          if (!baseProduct || !baseProduct.name || !baseProduct.price) {
+            console.error(`Invalid product at index ${index}:`, baseProduct);
+            return;
+          }
+
+          const product = { ...baseProduct };
+
+          itemsToAdd.push({
+            id: `${Date.now()}-${Math.random()}`,
+            product,
+            color,
+            quantity,
+            price: product.price * quantity
+          });
         }
+      });
 
-        const product = { ...baseProduct };
-
-        itemsToAdd.push({
-          id: `${Date.now()}-${Math.random()}`,
-          product,
-          color,
-          quantity,
-          price: product.price * quantity
-        });
+      if (itemsToAdd.length === 0) {
+        console.log('No items to add to cart');
+        return;
       }
-    });
 
-    if (itemsToAdd.length === 0) return;
+      console.log('Adding items to cart:', itemsToAdd);
 
-    // 触发飞入动画
-    setFlyingItem(true);
+      // 触发飞入动画
+      setFlyingItem(true);
 
-    setTimeout(() => {
-      setCart([...cart, ...itemsToAdd]);
-      setTempQuantities({});
-      setFlyingItem(false);
-      setCurrentPage('home');
-    }, 800);
+      setTimeout(() => {
+        try {
+          setCart(prevCart => [...prevCart, ...itemsToAdd]);
+          setTempQuantities({});
+          setFlyingItem(false);
+          setCurrentPage('home');
+        } catch (error) {
+          console.error('Error updating cart:', error);
+          setFlyingItem(false);
+          alert('加入購物車失敗，請重試');
+        }
+      }, 800);
+    } catch (error) {
+      console.error('Error in handleAddToCart:', error);
+      alert('加入購物車失敗，請重試');
+    }
   };
 
   // 更新购物车商品数量（按箱调整）
@@ -329,20 +393,28 @@ const App = () => {
 
   // 确认订单
   const handleConfirmOrder = () => {
-    const orderId = `ORDER-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${String(orderHistory.length + 1).padStart(3, '0')}`;
+    try {
+      const orderId = `ORDER-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${String(orderHistory.length + 1).padStart(3, '0')}`;
 
-    const newOrder = {
-      id: orderId,
-      date: new Date().toISOString(),
-      items: cart,
-      total: cart.reduce((sum, item) => sum + item.price, 0),
-      status: 'completed'
-    };
+      const newOrder = {
+        id: orderId,
+        date: new Date().toISOString(),
+        items: cart,
+        total: cart.reduce((sum, item) => {
+          if (!item || typeof item.price !== 'number') return sum;
+          return sum + item.price;
+        }, 0),
+        status: 'completed'
+      };
 
-    setOrderHistory([newOrder, ...orderHistory]);
-    setCart([]);
-    setShowCartDrawer(false);
-    setShowConfirmModal(true);
+      setOrderHistory([newOrder, ...orderHistory]);
+      setCart([]);
+      setShowCartDrawer(false);
+      setShowConfirmModal(true);
+    } catch (error) {
+      console.error('确认订单时出错:', error);
+      alert('訂單確認失敗，請重試');
+    }
   };
 
   // 删除历史订单
@@ -1242,4 +1314,11 @@ const App = () => {
   );
 };
 
-export default App;
+// 用错误边界包裹App组件
+const AppWithErrorBoundary = () => (
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>
+);
+
+export default AppWithErrorBoundary;
