@@ -5,71 +5,72 @@ import {
   Download, Trash2, Share2, History, Home as HomeIcon,
   Package, Wrench, Square, Ruler, Move, ArrowRight, Home as HomeIconAlt, GitBranch, MoreHorizontal
 } from 'lucide-react';
+import { EXCEL_TEMPLATE_PRODUCTS } from './templateProducts.js';
 
 // 完整产品数据（所有颜色共用同样的产品列表，只有颜色属性不同）
 const BASE_PRODUCTS = [
-  { category: '管槽(組)', name: 'KL-70', price: 110, package: '20組一件' },
-  { category: '管槽(組)', name: 'KL-80', price: 131, package: '10組一件' },
-  { category: '管槽(組)', name: 'KL-100', price: 210, package: '5組一件' },
-  { category: '管槽(組)', name: 'KL-120', price: 247, package: '5組一件' },
-  { category: '管槽(組)', name: 'KL-140', price: 294, package: '5組一件' },
-  { category: '自由接頭(軟管)', name: 'FA-70 (83公分)', price: 84, package: '10支一件' },
-  { category: '自由接頭(軟管)', name: 'FB-80 (83公分)', price: 105, package: '10支一件' },
-  { category: '自由接頭(軟管)', name: 'FB-80L (120公分)', price: 142, package: '10支一件' },
-  { category: '自由接頭(軟管)', name: 'FB-100 (83公分)', price: 158, package: '10支一件' },
-  { category: '自由接頭(軟管)', name: 'FB-120 (83公分)', price: 168, package: '10支一件' },
-  { category: '自由接頭(軟管)', name: 'FA-140 (100公分)', price: 231, package: '10支一件' },
-  { category: '豪華璧面接頭', name: 'WA-70', price: 58, package: '10組一件' },
-  { category: '簡易壁面接頭', name: 'WA-80', price: 58, package: '10組一件' },
-  { category: '簡易壁面接頭', name: 'WB-80', price: 58, package: '10組一件' },
-  { category: '簡易壁面接頭', name: 'WS-80', price: 58, package: '10組一件' },
-  { category: '簡易壁面接頭', name: 'WA-100', price: 84, package: '10組一件' },
-  { category: '簡易壁面接頭', name: 'WA-120', price: 110, package: '10組一件' },
-  { category: '簡易壁面接頭', name: 'WA-140', price: 131, package: '10組一件' },
-  { category: '平面90°接頭', name: 'KA-70', price: 63, package: '10組一件' },
-  { category: '平面90°接頭', name: 'KA-80', price: 68, package: '10組一件' },
-  { category: '平面90°接頭', name: 'KA-100', price: 116, package: '10組一件' },
-  { category: '平面90°接頭', name: 'KA-120', price: 147, package: '10組一件' },
-  { category: '平面90°接頭', name: 'KA-140', price: 173, package: '10組一件' },
-  { category: '平面45°接頭', name: 'KFA-80', price: 68, package: '10組一件' },
-  { category: '平面45°接頭', name: 'KFA-100', price: 116, package: '10組一件' },
-  { category: '平面45°接頭', name: 'KFA-120', price: 147, package: '10組一件' },
-  { category: '立面90°接頭', name: 'CA-70', price: 63, package: '10組一件' },
-  { category: '立面90°接頭', name: 'CA-80', price: 68, package: '10組一件' },
-  { category: '立面90°接頭', name: 'CA-100', price: 116, package: '10組一件' },
-  { category: '立面90°接頭', name: 'CA-120', price: 147, package: '10組一件' },
-  { category: '立面90°接頭', name: 'CA-140', price: 173, package: '10組一件' },
-  { category: '立面45°接頭', name: 'CFA-80', price: 68, package: '10組一件' },
-  { category: '立面45°接頭', name: 'CFA-100', price: 116, package: '10組一件' },
-  { category: '立面45°接頭', name: 'CFA-120', price: 147, package: '10組一件' },
-  { category: '直接頭', name: 'JA-70', price: 32, package: '10組一件' },
-  { category: '直接頭', name: 'JA-80', price: 32, package: '10組一件' },
-  { category: '直接頭', name: 'JA-100', price: 63, package: '10組一件' },
-  { category: '直接頭', name: 'JA-120', price: 79, package: '10組一件' },
-  { category: '直接頭', name: 'JA-140', price: 89, package: '10組一件' },
-  { category: '天花板接頭(通牆)', name: 'PA-80', price: 79, package: '10組一件' },
-  { category: '天花板接頭(通牆)', name: 'PA-100', price: 95, package: '10組一件' },
-  { category: '天花板接頭(通牆)', name: 'PA-120', price: 116, package: '10組一件' },
-  { category: '天花板接頭(通牆)', name: 'PA-140', price: 137, package: '10組一件' },
-  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-80', price: 116, package: '10組一件' },
-  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-100', price: 158, package: '10組一件' },
-  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-120', price: 179, package: '10組一件' },
-  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-140', price: 221, package: '10組一件' },
-  { category: '轉接頭(大小頭)', name: 'RA-128', price: 68, package: '10組一件' },
+  { category: '管槽(組)', name: 'KL-70', price: 110, package: '20組一箱' },
+  { category: '管槽(組)', name: 'KL-80', price: 131, package: '10組一箱' },
+  { category: '管槽(組)', name: 'KL-100', price: 210, package: '5組一箱' },
+  { category: '管槽(組)', name: 'KL-120', price: 247, package: '5組一箱' },
+  { category: '管槽(組)', name: 'KL-140', price: 294, package: '5組一箱' },
+  { category: '自由接頭(軟管)', name: 'FA-70 (83公分)', price: 84, package: '10支一箱' },
+  { category: '自由接頭(軟管)', name: 'FB-80 (83公分)', price: 105, package: '10支一箱' },
+  { category: '自由接頭(軟管)', name: 'FB-80L (120公分)', price: 142, package: '10支一箱' },
+  { category: '自由接頭(軟管)', name: 'FB-100 (83公分)', price: 158, package: '10支一箱' },
+  { category: '自由接頭(軟管)', name: 'FB-120 (83公分)', price: 168, package: '10支一箱' },
+  { category: '自由接頭(軟管)', name: 'FA-140 (100公分)', price: 231, package: '10支一箱' },
+  { category: '豪華璧面接頭', name: 'WA-70', price: 58, package: '10組一箱' },
+  { category: '簡易壁面接頭', name: 'WA-80', price: 58, package: '10組一箱' },
+  { category: '簡易壁面接頭', name: 'WB-80', price: 58, package: '10組一箱' },
+  { category: '簡易壁面接頭', name: 'WS-80', price: 58, package: '10組一箱' },
+  { category: '簡易壁面接頭', name: 'WA-100', price: 84, package: '10組一箱' },
+  { category: '簡易壁面接頭', name: 'WA-120', price: 110, package: '10組一箱' },
+  { category: '簡易壁面接頭', name: 'WA-140', price: 131, package: '10組一箱' },
+  { category: '平面90°接頭', name: 'KA-70', price: 63, package: '10組一箱' },
+  { category: '平面90°接頭', name: 'KA-80', price: 68, package: '10組一箱' },
+  { category: '平面90°接頭', name: 'KA-100', price: 116, package: '10組一箱' },
+  { category: '平面90°接頭', name: 'KA-120', price: 147, package: '10組一箱' },
+  { category: '平面90°接頭', name: 'KA-140', price: 173, package: '10組一箱' },
+  { category: '平面45°接頭', name: 'KFA-80', price: 68, package: '10組一箱' },
+  { category: '平面45°接頭', name: 'KFA-100', price: 116, package: '10組一箱' },
+  { category: '平面45°接頭', name: 'KFA-120', price: 147, package: '10組一箱' },
+  { category: '立面90°接頭', name: 'CA-70', price: 63, package: '10組一箱' },
+  { category: '立面90°接頭', name: 'CA-80', price: 68, package: '10組一箱' },
+  { category: '立面90°接頭', name: 'CA-100', price: 116, package: '10組一箱' },
+  { category: '立面90°接頭', name: 'CA-120', price: 147, package: '10組一箱' },
+  { category: '立面90°接頭', name: 'CA-140', price: 173, package: '10組一箱' },
+  { category: '立面45°接頭', name: 'CFA-80', price: 68, package: '10組一箱' },
+  { category: '立面45°接頭', name: 'CFA-100', price: 116, package: '10組一箱' },
+  { category: '立面45°接頭', name: 'CFA-120', price: 147, package: '10組一箱' },
+  { category: '直接頭', name: 'JA-70', price: 32, package: '10組一箱' },
+  { category: '直接頭', name: 'JA-80', price: 32, package: '10組一箱' },
+  { category: '直接頭', name: 'JA-100', price: 63, package: '10組一箱' },
+  { category: '直接頭', name: 'JA-120', price: 79, package: '10組一箱' },
+  { category: '直接頭', name: 'JA-140', price: 89, package: '10組一箱' },
+  { category: '天花板接頭(通牆)', name: 'PA-80', price: 79, package: '10組一箱' },
+  { category: '天花板接頭(通牆)', name: 'PA-100', price: 95, package: '10組一箱' },
+  { category: '天花板接頭(通牆)', name: 'PA-120', price: 116, package: '10組一箱' },
+  { category: '天花板接頭(通牆)', name: 'PA-140', price: 137, package: '10組一箱' },
+  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-80', price: 116, package: '10組一箱' },
+  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-100', price: 158, package: '10組一箱' },
+  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-120', price: 179, package: '10組一箱' },
+  { category: 'T型接頭(三通，不含轉接頭)', name: 'TA-140', price: 221, package: '10組一箱' },
+  { category: '轉接頭(大小頭)', name: 'RA-128', price: 68, package: '10組一箱' },
   { category: '轉接頭(大小頭)', name: 'RA-1008', price: 63, package: '10組一袋' },
   { category: '轉接頭(大小頭)', name: 'RA-1210', price: 63, package: '10組一袋' },
   { category: '轉接頭(大小頭)', name: 'RA-1412', price: 63, package: '10組一袋' },
-  { category: '轉接頭(大小頭)', name: 'RA-1408', price: 158, package: '10組一件' },
-  { category: '扭轉接頭', name: 'NA-80', price: 95, package: '10組一件' },
-  { category: '扭轉接頭', name: 'NA-120', price: 168, package: '10組一件' },
-  { category: '異徑直接頭', name: 'JB-108', price: 79, package: '10組一件' },
-  { category: '異徑直接頭', name: 'JB-128', price: 95, package: '10組一件' },
-  { category: '異徑直接頭', name: 'JB-1210', price: 116, package: '10組一件' },
-  { category: '末端接頭', name: 'EA-70', price: 32, package: '10組一件' },
-  { category: '末端接頭', name: 'EA-100', price: 68, package: '10組一件' },
-  { category: '軟管固定器', name: 'FS-80', price: 18, package: '30個一件' },
-  { category: '立面扭轉', name: 'CAN-80', price: 90, package: '10組一件' },
-  { category: '段差接頭', name: 'IFA-100', price: 150, package: '10組一件' }
+  { category: '轉接頭(大小頭)', name: 'RA-1408', price: 158, package: '10組一箱' },
+  { category: '扭轉接頭', name: 'NA-80', price: 95, package: '10組一箱' },
+  { category: '扭轉接頭', name: 'NA-120', price: 168, package: '10組一箱' },
+  { category: '異徑直接頭', name: 'JB-108', price: 79, package: '10組一箱' },
+  { category: '異徑直接頭', name: 'JB-128', price: 95, package: '10組一箱' },
+  { category: '異徑直接頭', name: 'JB-1210', price: 116, package: '10組一箱' },
+  { category: '末端接頭', name: 'EA-70', price: 32, package: '10組一箱' },
+  { category: '末端接頭', name: 'EA-100', price: 68, package: '10組一箱' },
+  { category: '軟管固定器', name: 'FS-80', price: 18, package: '30個一箱' },
+  { category: '立面扭轉', name: 'CAN-80', price: 90, package: '10組一箱' },
+  { category: '段差接頭', name: 'IFA-100', price: 150, package: '10組一箱' }
 ];
 
 const COLORS = ['象牙', '咖啡', '白色', '灰色', '黑色'];
@@ -181,9 +182,16 @@ const App = () => {
     }
   }, [orderHistory]);
 
-  // 计算购物车总件数
+  // 计算购物车总数量和总箱数
   const cartTotalItems = useMemo(() => {
     return cart.reduce((sum, item) => sum + item.quantity, 0);
+  }, [cart]);
+
+  const cartTotalBoxes = useMemo(() => {
+    return cart.reduce((sum, item) => {
+      const unitSize = getUnitSize(item.product.package);
+      return sum + Math.ceil(item.quantity / unitSize);
+    }, 0);
   }, [cart]);
 
   // 计算每个分类的订购数量
@@ -270,25 +278,39 @@ const App = () => {
       setTempQuantities({});
       setFlyingItem(false);
       setCurrentPage('home');
-    }, 600);
+    }, 800);
   };
 
-  // 更新购物车商品数量
-  const handleUpdateCartItem = (itemId, newQuantity) => {
+  // 更新购物车商品数量（按箱调整）
+  const handleUpdateCartItem = (itemId, delta) => {
+    const item = cart.find(i => i.id === itemId);
+    if (!item) return;
+
+    const unitSize = getUnitSize(item.product.package);
+    const newQuantity = item.quantity + (unitSize * delta);
+
     if (newQuantity <= 0) {
-      setCart(cart.filter(item => item.id !== itemId));
+      // 数量为0时，弹出确认删除
+      if (window.confirm(`確定要從購物車移除「${item.product.name} (${item.color})」嗎？`)) {
+        setCart(cart.filter(i => i.id !== itemId));
+      }
     } else {
-      setCart(cart.map(item =>
-        item.id === itemId
-          ? { ...item, quantity: newQuantity, price: item.product.price * newQuantity }
-          : item
+      setCart(cart.map(i =>
+        i.id === itemId
+          ? { ...i, quantity: newQuantity, price: item.product.price * newQuantity }
+          : i
       ));
     }
   };
 
-  // 删除购物车商品
+  // 删除购物车商品（弹出确认）
   const handleRemoveCartItem = (itemId) => {
-    setCart(cart.filter(item => item.id !== itemId));
+    const item = cart.find(i => i.id === itemId);
+    if (!item) return;
+
+    if (window.confirm(`確定要從購物車移除「${item.product.name} (${item.color})」嗎？`)) {
+      setCart(cart.filter(i => i.id !== itemId));
+    }
   };
 
   // 确认订单
@@ -318,58 +340,113 @@ const App = () => {
     }
   };
 
-  // 生成 Excel
+  // 生成 Excel（每个颜色一个页签，严格按照模板格式）
   const generateExcelForOrder = (order) => {
     const wb = XLSX.utils.book_new();
-    const data = [];
 
     const today = new Date(order.date);
     const dateStr = `${today.getFullYear()} 年 ${today.getMonth() + 1} 月 ${String(today.getDate()).padStart(2, '0')} 日`;
 
-    data.push(['嘉城工業股份有限公司', '', '', '', '', '', '', '']);
-    data.push(['新品推出優惠專案 <訂購單>', '', '', '', '', '', '', '']);
-    data.push(['訂購專線：(06)5782904', '', '', `實施日期 ${dateStr}`, '', '', '', '']);
-    data.push(['傳真專線：(06)5782924', '', '', `訂單編號：${order.id}`, '', '', '', '']);
-    data.push(['單位 新台幣', '', '', '台南市山上區新莊里 62號', '', '', '', '']);
-    data.push(['品 名', '型 號', '顏色', '優惠價', '訂購數量', '合計金額', '', '包裝方式']);
+    // 为每个颜色创建一个页签
+    COLORS.forEach(color => {
+      const data = [];
 
-    order.items.forEach(item => {
-      data.push([
-        item.product.category,
-        item.product.name,
-        item.color,
-        item.product.price,
-        item.quantity,
-        item.price,
-        '',
-        item.product.package
-      ]);
+      // 表头（严格按照模板格式，列数29列）
+      data.push(['嘉 城 工 業 股 份 有 限 公 司', '', '', '', '', '新品推出優惠專案 <訂購單>', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+      data.push(['訂購專線：(06)5782904', '', '', '', '', `實施日期  ${dateStr}`, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+      data.push(['傳真專線：(06)5782924', '', '', '單位', '新台幣', '          台南市山上區新莊里 62號', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+      data.push(['品    名', '型    號', '', '顏色', '優惠價', '訂購數量', '合計金額', '折扣後金額', '     包裝方式', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+
+      let colorTotal = 0;
+      const templateProducts = EXCEL_TEMPLATE_PRODUCTS[color] || [];
+
+      // 遍历模板中该颜色的所有产品
+      templateProducts.forEach(templateProduct => {
+        // 查找订单中匹配的产品
+        // 使用部分匹配：订单中的产品名称可能是"KL-80"，模板中可能是"KL-80 (83公分)"
+        const orderItem = order.items.find(item => {
+          if (item.color !== color) return false;
+
+          // 精确匹配或部分匹配
+          const orderName = item.product.name.trim();
+          const templateModel = templateProduct.model.trim();
+
+          return templateModel === orderName ||
+                 templateModel.startsWith(orderName + ' ') ||
+                 templateModel.startsWith(orderName + '  ');
+        });
+
+        const quantity = orderItem ? orderItem.quantity : '';
+        const itemTotal = orderItem ? orderItem.price : '';
+        const discountedTotal = orderItem ? 0 : ''; // 折扣后金额
+
+        if (orderItem) {
+          colorTotal += orderItem.price;
+        }
+
+        // 拆分型号（处理包含规格的型号，如"KL-80 (83公分)"）
+        let model1 = templateProduct.model;
+        let model2 = '';
+
+        // 检查是否包含括号
+        const match = templateProduct.model.match(/^(.+?)\s+(\(.+\))$/);
+        if (match) {
+          model1 = match[1];
+          model2 = match[2];
+        }
+
+        data.push([
+          templateProduct.category,
+          model1,
+          model2,
+          color,
+          templateProduct.price,
+          quantity,
+          itemTotal,
+          discountedTotal,
+          templateProduct.packaging,
+          '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+        ]);
+      });
+
+      // 底部总计（只在该颜色有订单时显示）
+      if (colorTotal > 0) {
+        data.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        data.push(['◎ 以上報價不含運費、稅金。', '', '', '◎ 訂購金額未達新台幣5000元，運費由客戶支付。', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        data.push(['◎ 每月25日結帳，26日起計次月帳。', '', '', '◎ 貨款票期：當月結，最長 60天票。', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        data.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+
+        const tax = Math.round(colorTotal * 0.05);
+        const grandTotal = colorTotal + tax;
+
+        data.push(['總計金額', '', '稅金', '', '應收金額', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        data.push([colorTotal, '', tax, '', grandTotal, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+      }
+
+      const ws = XLSX.utils.aoa_to_sheet(data);
+
+      // 设置列宽（29列）
+      ws['!cols'] = [
+        { wch: 15 }, { wch: 12 }, { wch: 12 }, { wch: 8 }, { wch: 10 },
+        { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 15 }, { wch: 8 },
+        { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 },
+        { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 },
+        { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 },
+        { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }
+      ];
+
+      XLSX.utils.book_append_sheet(wb, ws, color);
     });
 
-    const tax = Math.round(order.total * 0.05);
-    const grandTotal = order.total + tax;
-
-    data.push(['', '', '', '', '', '', '', '']);
-    data.push(['◎ 以上報價不含運費、稅金。', '', '', '◎ 訂購金額未達新台幣5000元，運費由客戶支付。', '', '', '', '']);
-    data.push(['◎ 每月25日結帳，26日起計次月帳。', '', '', '◎ 貨款票期：當月結，最長 60天票。', '', '', '', '']);
-    data.push(['', '', '', '', '', '', '', '']);
-    data.push(['總計金額', '', '稅金', '', '應收金額', '', '', '']);
-    data.push([order.total, '', tax, '', grandTotal, '', '', '']);
-
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    ws['!cols'] = [
-      { wch: 20 }, { wch: 18 }, { wch: 8 }, { wch: 10 },
-      { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 15 }
-    ];
-
-    XLSX.utils.book_append_sheet(wb, ws, '訂購單');
     return wb;
   };
 
   // 下载 Excel
   const handleDownloadExcel = (order) => {
     const wb = generateExcelForOrder(order);
-    XLSX.writeFile(wb, `嘉城工業訂購單_${order.id}.xlsx`);
+    const orderDate = new Date(order.date);
+    const dateStr = `${orderDate.getFullYear()}${String(orderDate.getMonth() + 1).padStart(2, '0')}${String(orderDate.getDate()).padStart(2, '0')}`;
+    XLSX.writeFile(wb, `嘉城工業訂購單_大金材料-${dateStr}.xlsx`);
     setShowMoreMenu(false);
   };
 
@@ -378,7 +455,9 @@ const App = () => {
     const wb = generateExcelForOrder(order);
     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const fileName = `嘉城工業訂購單_${order.id}.xlsx`;
+    const orderDate = new Date(order.date);
+    const dateStr = `${orderDate.getFullYear()}${String(orderDate.getMonth() + 1).padStart(2, '0')}${String(orderDate.getDate()).padStart(2, '0')}`;
+    const fileName = `嘉城工業訂購單_大金材料-${dateStr}.xlsx`;
     const file = new File([blob], fileName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     });
@@ -388,7 +467,7 @@ const App = () => {
         await navigator.share({
           files: [file],
           title: '嘉城工業訂購單',
-          text: `訂單編號：${order.id}\n訂購金額：NT$ ${order.total.toLocaleString()}`
+          text: `客戶：大金材料\n訂購日期：${dateStr}\n訂購金額：NT$ ${order.total.toLocaleString()}`
         });
       } catch (error) {
         if (error.name !== 'AbortError') {
@@ -463,6 +542,12 @@ const App = () => {
       const [color, index] = key.split('-');
       const product = BASE_PRODUCTS[parseInt(index)];
       return sum + (product.price * qty);
+    }, 0);
+    const totalBoxes = Object.entries(tempQuantities).reduce((sum, [key, qty]) => {
+      const [color, index] = key.split('-');
+      const product = BASE_PRODUCTS[parseInt(index)];
+      const unitSize = getUnitSize(product.package);
+      return sum + Math.ceil(qty / unitSize);
     }, 0);
 
     return (
@@ -545,7 +630,7 @@ const App = () => {
 
                           {qty > 0 && (
                             <div className="text-gray-500 text-sm">
-                              {Math.ceil(qty / unitSize)} 件
+                              {Math.ceil(qty / unitSize)} 箱
                             </div>
                           )}
                         </div>
@@ -561,9 +646,12 @@ const App = () => {
         {/* 底部操作栏 */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#0a0a0a] border-t border-white/10">
           <div className="text-white text-center mb-3">
-            <span className="text-gray-400">總計：</span>
+            <span className="text-gray-400">總數量：</span>
             <span className="text-xl font-bold mx-2">{totalQuantity}</span>
-            <span className="text-gray-400">件</span>
+            <span className="mx-2">|</span>
+            <span className="text-gray-400">總箱數：</span>
+            <span className="text-xl font-bold mx-2">{totalBoxes}</span>
+            <span className="text-gray-400">箱</span>
             <span className="mx-2">|</span>
             <span className="text-blue-400 text-xl font-bold">NT$ {totalPrice.toLocaleString()}</span>
           </div>
@@ -572,7 +660,7 @@ const App = () => {
             disabled={totalQuantity === 0}
             className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-all active:scale-98"
           >
-            加入訂單
+            加入購物車
           </button>
         </div>
       </div>
@@ -617,7 +705,10 @@ const App = () => {
                 </div>
               </div>
               <div className="text-gray-400 text-sm">
-                共 {order.items.reduce((sum, item) => sum + item.quantity, 0)} 件商品
+                共 {order.items.reduce((sum, item) => {
+                  const unitSize = getUnitSize(item.product.package);
+                  return sum + Math.ceil(item.quantity / unitSize);
+                }, 0)} 箱商品
               </div>
             </div>
           ))}
@@ -684,16 +775,19 @@ const App = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => handleUpdateCartItem(item.id, item.quantity - 1)}
+                          onClick={() => handleUpdateCartItem(item.id, -1)}
                           className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
                         >
                           −
                         </button>
-                        <div className="w-12 text-center text-white font-bold">
+                        <div className="min-w-[60px] text-center text-white font-bold">
                           {item.quantity}
+                          <div className="text-xs text-gray-400">
+                            {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱
+                          </div>
                         </div>
                         <button
-                          onClick={() => handleUpdateCartItem(item.id, item.quantity + 1)}
+                          onClick={() => handleUpdateCartItem(item.id, 1)}
                           className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
                         >
                           +
@@ -714,17 +808,27 @@ const App = () => {
           {cart.length > 0 && (
             <div className="p-4 border-t border-white/10 bg-[#0a0a0a]">
               <div className="space-y-2 mb-4">
-                <div className="flex justify-between text-gray-400">
+                {/* 主要信息：总数量和总箱数 */}
+                <div className="flex justify-between text-white text-lg font-bold">
+                  <span>總數量</span>
+                  <span className="text-blue-400">{cartTotalItems}</span>
+                </div>
+                <div className="flex justify-between text-white text-lg font-bold pb-2 border-b border-white/10">
+                  <span>總箱數</span>
+                  <span className="text-blue-400">{cartTotalBoxes} 箱</span>
+                </div>
+                {/* 次要信息：价格 */}
+                <div className="flex justify-between text-gray-400 text-sm">
                   <span>小計</span>
                   <span>NT$ {total.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-gray-400">
+                <div className="flex justify-between text-gray-400 text-sm">
                   <span>稅金 (5%)</span>
                   <span>NT$ {tax.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-white text-lg font-bold pt-2 border-t border-white/10">
+                <div className="flex justify-between text-gray-400 text-sm pt-2 border-t border-white/5">
                   <span>總計</span>
-                  <span className="text-blue-400">NT$ {grandTotal.toLocaleString()}</span>
+                  <span>NT$ {grandTotal.toLocaleString()}</span>
                 </div>
               </div>
 
@@ -787,13 +891,14 @@ const App = () => {
     const tax = Math.round(order.total * 0.05);
     const grandTotal = order.total + tax;
 
-    // 按颜色分组商品
-    const itemsByColor = {};
+    // 按分类分组商品
+    const itemsByCategory = {};
     order.items.forEach(item => {
-      if (!itemsByColor[item.color]) {
-        itemsByColor[item.color] = [];
+      const category = item.product.category;
+      if (!itemsByCategory[category]) {
+        itemsByCategory[category] = [];
       }
-      itemsByColor[item.color].push(item);
+      itemsByCategory[category].push(item);
     });
 
     return (
@@ -863,22 +968,29 @@ const App = () => {
               </div>
             </div>
 
-            {/* 商品列表（按颜色分组） */}
+            {/* 商品列表（按分类分组） */}
             <div className="space-y-4">
-              {Object.entries(itemsByColor).map(([color, items]) => (
-                <div key={color} className="bg-white/5 rounded-xl p-4 border border-white/10">
-                  <div className="text-blue-400 font-bold mb-3">{color}</div>
-                  <div className="space-y-2">
+              {Object.entries(itemsByCategory).map(([category, items]) => (
+                <div key={category} className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="text-blue-400 font-bold mb-3">{category}</div>
+                  <div className="space-y-3">
                     {items.map(item => (
-                      <div key={item.id} className="flex justify-between items-start py-2 border-b border-white/5 last:border-0">
-                        <div className="flex-1">
-                          <div className="text-white font-medium">{item.product.name}</div>
-                          <div className="text-gray-400 text-sm">
-                            NT$ {item.product.price} × {item.quantity}
+                      <div key={item.id} className="bg-white/5 rounded-lg p-3 border border-white/5">
+                        {/* 主要信息：规格、数量、颜色 */}
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-3">
+                            <div className="text-white text-lg font-bold">{item.product.name}</div>
+                            <div className="text-blue-400 text-lg font-bold">× {item.quantity}</div>
+                            <div className="text-gray-300 text-sm px-2 py-1 bg-white/10 rounded">
+                              {item.color}
+                            </div>
                           </div>
                         </div>
-                        <div className="text-white font-bold">
-                          NT$ {item.price.toLocaleString()}
+                        {/* 次要信息：单价、小计 */}
+                        <div className="flex items-center gap-4 text-sm text-gray-400">
+                          <div>單價 NT$ {item.product.price}</div>
+                          <div>|</div>
+                          <div>小計 <span className="text-white font-medium">NT$ {item.price.toLocaleString()}</span></div>
                         </div>
                       </div>
                     ))}
@@ -950,7 +1062,7 @@ const App = () => {
 
         {/* 中间标题 */}
         <div className="text-lg font-bold">
-          {currentPage === 'home' && '嘉城產品訂購系統'}
+          {currentPage === 'home' && '空調飾管訂購'}
           {currentPage === 'category' && selectedCategory?.name}
           {currentPage === 'history' && '歷史訂單'}
         </div>
@@ -962,7 +1074,7 @@ const App = () => {
         >
           <ShoppingCart className="w-6 h-6" />
           {cartTotalItems > 0 && (
-            <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce-once">
+            <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs font-bold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center animate-bounce-once">
               {cartTotalItems}
             </div>
           )}
@@ -1029,15 +1141,19 @@ const App = () => {
       <style>{`
         @keyframes fly-to-cart {
           0% {
-            transform: translate(0, 100px) scale(1);
+            transform: translate(0, 50px) scale(1) rotate(0deg);
             opacity: 1;
           }
-          50% {
-            transform: translate(150px, -200px) scale(0.7) rotate(45deg);
-            opacity: 0.8;
+          30% {
+            transform: translate(100px, -100px) scale(0.8) rotate(20deg);
+            opacity: 1;
+          }
+          70% {
+            transform: translate(250px, -250px) scale(0.4) rotate(45deg);
+            opacity: 0.6;
           }
           100% {
-            transform: translate(300px, -300px) scale(0.2) rotate(90deg);
+            transform: translate(350px, -350px) scale(0.1) rotate(60deg);
             opacity: 0;
           }
         }
@@ -1081,7 +1197,7 @@ const App = () => {
         }
 
         .animate-fly-to-cart {
-          animation: fly-to-cart 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+          animation: fly-to-cart 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .animate-slide-in-right {
