@@ -80,55 +80,63 @@ const CATEGORIES = [
     id: 'pipe',
     name: '管槽',
     icon: Package,
-    image: '/管槽.png',  // 使用真实照片
+    image: '/管槽.png',
     subcategories: ['管槽(組)']
   },
   {
     id: 'hose',
     name: '自由接頭(軟管)',
     icon: Wrench,
+    image: '/自由接头.png',
     subcategories: ['自由接頭(軟管)']
   },
   {
     id: 'wall',
     name: '壁面接頭',
     icon: Square,
+    image: '/壁面接头.png',
     subcategories: ['豪華璧面接頭', '簡易壁面接頭']
   },
   {
     id: 'flat',
     name: '平面接頭',
     icon: Ruler,
+    image: '/平面接头.png',
     subcategories: ['平面90°接頭', '平面45°接頭']
   },
   {
     id: 'vertical',
     name: '立面接頭',
     icon: Move,
+    image: '/立面接头.png',
     subcategories: ['立面90°接頭', '立面45°接頭']
   },
   {
     id: 'straight',
     name: '直接頭',
     icon: ArrowRight,
+    image: '/直接头.png',
     subcategories: ['直接頭']
   },
   {
     id: 'ceiling',
     name: '天花板接頭(通牆蓋)',
     icon: HomeIconAlt,
+    image: '/天花板接头.png',
     subcategories: ['天花板接頭(通牆)']
   },
   {
     id: 't-joint',
     name: 'T型接頭(三通)',
     icon: GitBranch,
+    image: '/T型接头.png',
     subcategories: ['T型接頭(三通，不含轉接頭)']
   },
   {
     id: 'others',
     name: '其他',
     icon: MoreHorizontal,
+    // 其他分类暂时没有照片，使用图标
     subcategories: ['轉接頭(大小頭)', '扭轉接頭', '異徑直接頭', '末端接頭', '軟管固定器', '立面扭轉', '段差接頭']
   }
 ];
