@@ -332,51 +332,75 @@ const App = () => {
     }
   };
 
-  // 生成 Excel
+  // 生成 Excel（每个颜色一个页签）
   const generateExcelForOrder = (order) => {
     const wb = XLSX.utils.book_new();
-    const data = [];
 
     const today = new Date(order.date);
     const dateStr = `${today.getFullYear()} 年 ${today.getMonth() + 1} 月 ${String(today.getDate()).padStart(2, '0')} 日`;
 
-    data.push(['嘉城工業股份有限公司', '', '', '', '', '', '', '']);
-    data.push(['新品推出優惠專案 <訂購單>', '', '', '', '', '', '', '']);
-    data.push(['訂購專線：(06)5782904', '', '', `實施日期 ${dateStr}`, '', '', '', '']);
-    data.push(['傳真專線：(06)5782924', '', '', `訂單編號：${order.id}`, '', '', '', '']);
-    data.push(['單位 新台幣', '', '', '台南市山上區新莊里 62號', '', '', '', '']);
-    data.push(['品 名', '型 號', '顏色', '優惠價', '訂購數量', '合計金額', '', '包裝方式']);
+    // 为每个颜色创建一个页签
+    COLORS.forEach(color => {
+      const data = [];
 
-    order.items.forEach(item => {
-      data.push([
-        item.product.category,
-        item.product.name,
-        item.color,
-        item.product.price,
-        item.quantity,
-        item.price,
-        '',
-        item.product.package
-      ]);
+      // 表头
+      data.push(['嘉城工業股份有限公司', '', '', '', '', '', '', '']);
+      data.push(['新品推出優惠專案 <訂購單>', '', '', '', '', '', '', '']);
+      data.push(['訂購專線：(06)5782904', '', '', `實施日期 ${dateStr}`, '', '', '', '']);
+      data.push(['傳真專線：(06)5782924', '', '', `訂單編號：${order.id}`, '', '', '', '']);
+      data.push(['單位 新台幣', '', '', '台南市山上區新莊里 62號', '', '', '', '']);
+      data.push(['品 名', '型 號', '顏色', '優惠價', '訂購數量', '合計金額', '', '包裝方式']);
+
+      let colorTotal = 0;
+
+      // 遍历所有产品
+      BASE_PRODUCTS.forEach(product => {
+        // 查找该产品在当前颜色下的订单项
+        const orderItem = order.items.find(
+          item => item.product.name === product.name && item.color === color
+        );
+
+        const quantity = orderItem ? orderItem.quantity : '';
+        const itemTotal = orderItem ? orderItem.price : '';
+
+        if (orderItem) {
+          colorTotal += orderItem.price;
+        }
+
+        data.push([
+          product.category,
+          product.name,
+          color,
+          product.price,
+          quantity,
+          itemTotal,
+          '',
+          product.package
+        ]);
+      });
+
+      // 只有当该颜色有订单时才显示税金和总计
+      if (colorTotal > 0) {
+        const tax = Math.round(colorTotal * 0.05);
+        const grandTotal = colorTotal + tax;
+
+        data.push(['', '', '', '', '', '', '', '']);
+        data.push(['◎ 以上報價不含運費、稅金。', '', '', '◎ 訂購金額未達新台幣5000元，運費由客戶支付。', '', '', '', '']);
+        data.push(['◎ 每月25日結帳，26日起計次月帳。', '', '', '◎ 貨款票期：當月結，最長 60天票。', '', '', '', '']);
+        data.push(['', '', '', '', '', '', '', '']);
+        data.push(['總計金額', '', '稅金', '', '應收金額', '', '', '']);
+        data.push([colorTotal, '', tax, '', grandTotal, '', '', '']);
+      }
+
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      ws['!cols'] = [
+        { wch: 20 }, { wch: 18 }, { wch: 8 }, { wch: 10 },
+        { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 15 }
+      ];
+
+      XLSX.utils.book_append_sheet(wb, ws, color);
     });
 
-    const tax = Math.round(order.total * 0.05);
-    const grandTotal = order.total + tax;
-
-    data.push(['', '', '', '', '', '', '', '']);
-    data.push(['◎ 以上報價不含運費、稅金。', '', '', '◎ 訂購金額未達新台幣5000元，運費由客戶支付。', '', '', '', '']);
-    data.push(['◎ 每月25日結帳，26日起計次月帳。', '', '', '◎ 貨款票期：當月結，最長 60天票。', '', '', '', '']);
-    data.push(['', '', '', '', '', '', '', '']);
-    data.push(['總計金額', '', '稅金', '', '應收金額', '', '', '']);
-    data.push([order.total, '', tax, '', grandTotal, '', '', '']);
-
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    ws['!cols'] = [
-      { wch: 20 }, { wch: 18 }, { wch: 8 }, { wch: 10 },
-      { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 15 }
-    ];
-
-    XLSX.utils.book_append_sheet(wb, ws, '訂購單');
     return wb;
   };
 
@@ -804,13 +828,14 @@ const App = () => {
     const tax = Math.round(order.total * 0.05);
     const grandTotal = order.total + tax;
 
-    // 按颜色分组商品
-    const itemsByColor = {};
+    // 按分类分组商品
+    const itemsByCategory = {};
     order.items.forEach(item => {
-      if (!itemsByColor[item.color]) {
-        itemsByColor[item.color] = [];
+      const category = item.product.category;
+      if (!itemsByCategory[category]) {
+        itemsByCategory[category] = [];
       }
-      itemsByColor[item.color].push(item);
+      itemsByCategory[category].push(item);
     });
 
     return (
@@ -880,22 +905,29 @@ const App = () => {
               </div>
             </div>
 
-            {/* 商品列表（按颜色分组） */}
+            {/* 商品列表（按分类分组） */}
             <div className="space-y-4">
-              {Object.entries(itemsByColor).map(([color, items]) => (
-                <div key={color} className="bg-white/5 rounded-xl p-4 border border-white/10">
-                  <div className="text-blue-400 font-bold mb-3">{color}</div>
-                  <div className="space-y-2">
+              {Object.entries(itemsByCategory).map(([category, items]) => (
+                <div key={category} className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="text-blue-400 font-bold mb-3">{category}</div>
+                  <div className="space-y-3">
                     {items.map(item => (
-                      <div key={item.id} className="flex justify-between items-start py-2 border-b border-white/5 last:border-0">
-                        <div className="flex-1">
-                          <div className="text-white font-medium">{item.product.name}</div>
-                          <div className="text-gray-400 text-sm">
-                            NT$ {item.product.price} × {item.quantity}
+                      <div key={item.id} className="bg-white/5 rounded-lg p-3 border border-white/5">
+                        {/* 主要信息：规格、数量、颜色 */}
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-3">
+                            <div className="text-white text-lg font-bold">{item.product.name}</div>
+                            <div className="text-blue-400 text-lg font-bold">× {item.quantity}</div>
+                            <div className="text-gray-300 text-sm px-2 py-1 bg-white/10 rounded">
+                              {item.color}
+                            </div>
                           </div>
                         </div>
-                        <div className="text-white font-bold">
-                          NT$ {item.price.toLocaleString()}
+                        {/* 次要信息：单价、小计 */}
+                        <div className="flex items-center gap-4 text-sm text-gray-400">
+                          <div>單價 NT$ {item.product.price}</div>
+                          <div>|</div>
+                          <div>小計 <span className="text-white font-medium">NT$ {item.price.toLocaleString()}</span></div>
                         </div>
                       </div>
                     ))}
