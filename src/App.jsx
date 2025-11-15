@@ -270,25 +270,39 @@ const App = () => {
       setTempQuantities({});
       setFlyingItem(false);
       setCurrentPage('home');
-    }, 600);
+    }, 800);
   };
 
-  // 更新购物车商品数量
-  const handleUpdateCartItem = (itemId, newQuantity) => {
+  // 更新购物车商品数量（按件调整）
+  const handleUpdateCartItem = (itemId, delta) => {
+    const item = cart.find(i => i.id === itemId);
+    if (!item) return;
+
+    const unitSize = getUnitSize(item.product.package);
+    const newQuantity = item.quantity + (unitSize * delta);
+
     if (newQuantity <= 0) {
-      setCart(cart.filter(item => item.id !== itemId));
+      // 数量为0时，弹出确认删除
+      if (window.confirm(`確定要從購物車移除「${item.product.name} (${item.color})」嗎？`)) {
+        setCart(cart.filter(i => i.id !== itemId));
+      }
     } else {
-      setCart(cart.map(item =>
-        item.id === itemId
-          ? { ...item, quantity: newQuantity, price: item.product.price * newQuantity }
-          : item
+      setCart(cart.map(i =>
+        i.id === itemId
+          ? { ...i, quantity: newQuantity, price: item.product.price * newQuantity }
+          : i
       ));
     }
   };
 
-  // 删除购物车商品
+  // 删除购物车商品（弹出确认）
   const handleRemoveCartItem = (itemId) => {
-    setCart(cart.filter(item => item.id !== itemId));
+    const item = cart.find(i => i.id === itemId);
+    if (!item) return;
+
+    if (window.confirm(`確定要從購物車移除「${item.product.name} (${item.color})」嗎？`)) {
+      setCart(cart.filter(i => i.id !== itemId));
+    }
   };
 
   // 确认订单
@@ -572,7 +586,7 @@ const App = () => {
             disabled={totalQuantity === 0}
             className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-all active:scale-98"
           >
-            加入訂單
+            加入購物車
           </button>
         </div>
       </div>
@@ -684,16 +698,19 @@ const App = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => handleUpdateCartItem(item.id, item.quantity - 1)}
+                          onClick={() => handleUpdateCartItem(item.id, -1)}
                           className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
                         >
                           −
                         </button>
-                        <div className="w-12 text-center text-white font-bold">
+                        <div className="min-w-[60px] text-center text-white font-bold">
                           {item.quantity}
+                          <div className="text-xs text-gray-400">
+                            {Math.ceil(item.quantity / getUnitSize(item.product.package))} 件
+                          </div>
                         </div>
                         <button
-                          onClick={() => handleUpdateCartItem(item.id, item.quantity + 1)}
+                          onClick={() => handleUpdateCartItem(item.id, 1)}
                           className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
                         >
                           +
@@ -950,7 +967,7 @@ const App = () => {
 
         {/* 中间标题 */}
         <div className="text-lg font-bold">
-          {currentPage === 'home' && '嘉城產品訂購系統'}
+          {currentPage === 'home' && '空調飾管訂購'}
           {currentPage === 'category' && selectedCategory?.name}
           {currentPage === 'history' && '歷史訂單'}
         </div>
@@ -962,7 +979,7 @@ const App = () => {
         >
           <ShoppingCart className="w-6 h-6" />
           {cartTotalItems > 0 && (
-            <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce-once">
+            <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs font-bold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center animate-bounce-once">
               {cartTotalItems}
             </div>
           )}
@@ -1029,15 +1046,19 @@ const App = () => {
       <style>{`
         @keyframes fly-to-cart {
           0% {
-            transform: translate(0, 100px) scale(1);
+            transform: translate(0, 50px) scale(1) rotate(0deg);
             opacity: 1;
           }
-          50% {
-            transform: translate(150px, -200px) scale(0.7) rotate(45deg);
-            opacity: 0.8;
+          30% {
+            transform: translate(100px, -100px) scale(0.8) rotate(20deg);
+            opacity: 1;
+          }
+          70% {
+            transform: translate(250px, -250px) scale(0.4) rotate(45deg);
+            opacity: 0.6;
           }
           100% {
-            transform: translate(300px, -300px) scale(0.2) rotate(90deg);
+            transform: translate(350px, -350px) scale(0.1) rotate(60deg);
             opacity: 0;
           }
         }
@@ -1081,7 +1102,7 @@ const App = () => {
         }
 
         .animate-fly-to-cart {
-          animation: fly-to-cart 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+          animation: fly-to-cart 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .animate-slide-in-right {
