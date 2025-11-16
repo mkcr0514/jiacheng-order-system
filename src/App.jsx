@@ -717,27 +717,11 @@ const App = () => {
                           </div>
                         )}
 
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1">
-                            <div className="text-white text-lg font-bold mb-1">
-                              {product.name}
-                            </div>
-                            <div className="text-gray-400 text-sm">
-                              NT$ {product.price} / {product.package}
-                            </div>
+                        {/* 上半部：規格名稱 + 數量調整器（參考示範圖排版） */}
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="text-white text-lg font-bold">
+                            {product.name}
                           </div>
-
-                          {subtotal > 0 && (
-                            <div className="text-right ml-3">
-                              <div className="text-xs text-gray-500">小計</div>
-                              <div className="text-blue-400 font-bold text-lg">
-                                NT$ {subtotal.toLocaleString()}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleQuantityChange(product.globalIndex, -1)}
@@ -756,13 +740,24 @@ const App = () => {
                               +
                             </button>
                           </div>
+                        </div>
 
-                          {qty > 0 && (
+                        {/* 價格資訊 */}
+                        <div className="text-gray-400 text-sm mb-3">
+                          NT$ {product.price} / {product.package}
+                        </div>
+
+                        {/* 下半部：小計 + 箱數（有數量時才顯示） */}
+                        {qty > 0 && (
+                          <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                            <div className="text-gray-400 text-sm">
+                              小計 NT$ {subtotal.toLocaleString()}
+                            </div>
                             <div className="text-gray-500 text-sm">
                               {Math.ceil(qty / unitSize)} 箱
                             </div>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -908,7 +903,7 @@ const App = () => {
                           <div className="flex-1">
                             {/* 规格名称 */}
                             <div className="text-white font-bold text-lg mb-2">{item.product.name}</div>
-                            {/* 颜色 - 强调显示 */}
+                            {/* 颜色 - 強調顯示 */}
                             <div className="inline-block px-3 py-1.5 rounded-lg text-base font-bold"
                               style={{
                                 backgroundColor:
