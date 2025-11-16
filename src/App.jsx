@@ -703,39 +703,39 @@ const App = () => {
                     return (
                       <div
                         key={product.globalIndex}
-                        className={`bg-white/5 rounded-xl p-3 border transition-all ${
+                        className={`bg-white/5 rounded-xl p-4 border transition-all ${
                           qty > 0 ? 'border-blue-400/50 bg-white/10' : 'border-white/10'
                         }`}
                       >
                         {/* 購物車已有提示 */}
                         {cartQty > 0 && (
-                          <div className="mb-2 px-2 py-1.5 bg-blue-500/10 border border-blue-500/30 rounded">
-                            <div className="flex items-center gap-1.5 text-blue-400 text-xs">
-                              <ShoppingCart className="w-3 h-3" />
+                          <div className="mb-3 px-3 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                            <div className="flex items-center gap-2 text-blue-400 text-sm">
+                              <ShoppingCart className="w-4 h-4" />
                               <span>購物車中已有 {cartQty} 組（{Math.ceil(cartQty / unitSize)} 箱）</span>
                             </div>
                           </div>
                         )}
 
-                        {/* 上半部：規格名稱 + 數量調整器 */}
-                        <div className="flex items-center justify-between mb-1">
-                          <div className="text-white text-base font-bold">
+                        {/* 上半部：規格名稱 + 數量調整器（參考示範圖排版） */}
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="text-white text-lg font-bold">
                             {product.name}
                           </div>
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleQuantityChange(product.globalIndex, -1)}
                               disabled={qty === 0}
-                              className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white disabled:opacity-30 hover:bg-white/10 transition-all active:scale-90"
+                              className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white disabled:opacity-30 hover:bg-white/10 transition-all active:scale-90"
                             >
                               −
                             </button>
-                            <div className="w-12 text-center text-white text-base font-medium">
+                            <div className="w-16 text-center text-white text-xl font-bold">
                               {qty}
                             </div>
                             <button
                               onClick={() => handleQuantityChange(product.globalIndex, 1)}
-                              className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all active:scale-90"
+                              className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all active:scale-90"
                             >
                               +
                             </button>
@@ -743,17 +743,17 @@ const App = () => {
                         </div>
 
                         {/* 價格資訊 */}
-                        <div className="text-gray-400 text-xs mb-2">
+                        <div className="text-gray-400 text-sm mb-3">
                           NT$ {product.price} / {product.package}
                         </div>
 
                         {/* 下半部：小計 + 箱數（有數量時才顯示） */}
                         {qty > 0 && (
-                          <div className="flex items-center justify-between pt-2 border-t border-white/10">
-                            <div className="text-gray-400 text-xs">
+                          <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                            <div className="text-gray-400 text-sm">
                               小計 NT$ {subtotal.toLocaleString()}
                             </div>
-                            <div className="text-gray-400 text-xs">
+                            <div className="text-gray-500 text-sm">
                               {Math.ceil(qty / unitSize)} 箱
                             </div>
                           </div>
@@ -895,24 +895,35 @@ const App = () => {
                     {items.map(item => (
                       <div
                         key={item.id}
-                        className={`bg-white/5 rounded-xl p-3 border border-white/10 transition-all duration-400 ${
+                        className={`bg-white/5 rounded-xl p-4 border border-white/10 transition-all duration-400 ${
                           removingItems.has(item.id) ? 'animate-remove-item' : ''
                         }`}
                       >
-                        <div className="flex justify-between items-start mb-2">
+                        <div className="flex justify-between items-start mb-3">
                           <div className="flex-1">
                             {/* 规格名称 */}
-                            <div className="text-white font-bold text-base mb-1.5">{item.product.name}</div>
-                            {/* 颜色 - 低調顯示 */}
-                            <div className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-white/10 text-gray-300">
+                            <div className="text-white font-bold text-lg mb-2">{item.product.name}</div>
+                            {/* 颜色 - 強調顯示 */}
+                            <div className="inline-block px-3 py-1.5 rounded-lg text-base font-bold"
+                              style={{
+                                backgroundColor:
+                                  item.color === '象牙' ? '#FFF8DC' :
+                                  item.color === '咖啡' ? '#8B4513' :
+                                  item.color === '白色' ? '#FFFFFF' :
+                                  item.color === '灰色' ? '#808080' :
+                                  '#000000',
+                                color:
+                                  item.color === '白色' || item.color === '象牙' ? '#000000' : '#FFFFFF'
+                              }}
+                            >
                               {item.color}
                             </div>
                           </div>
                           <button
                             onClick={() => handleRemoveCartItem(item.id)}
-                            className="p-1.5 hover:bg-red-500/20 rounded-lg transition-all"
+                            className="p-2 hover:bg-red-500/20 rounded-lg transition-all"
                           >
-                            <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                            <Trash2 className="w-4 h-4 text-red-400" />
                           </button>
                         </div>
 
@@ -921,17 +932,17 @@ const App = () => {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleUpdateCartItem(item.id, -1)}
-                              className="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all text-sm"
+                              className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
                             >
                               −
                             </button>
-                            <div className="min-w-[50px] text-center">
-                              <div className="text-white font-bold text-base">{item.quantity}</div>
-                              <div className="text-[10px] text-gray-400">數量</div>
+                            <div className="min-w-[60px] text-center">
+                              <div className="text-white font-bold text-lg">{item.quantity}</div>
+                              <div className="text-xs text-gray-400">數量</div>
                             </div>
                             <button
                               onClick={() => handleUpdateCartItem(item.id, 1)}
-                              className="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all text-sm"
+                              className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
                             >
                               +
                             </button>
@@ -939,10 +950,10 @@ const App = () => {
 
                           {/* 箱数和金额 */}
                           <div className="text-right">
-                            <div className="text-gray-400 text-xs mb-0.5">
+                            <div className="text-gray-400 text-sm mb-1">
                               {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱
                             </div>
-                            <div className="text-blue-400 font-bold text-base">
+                            <div className="text-blue-400 font-bold text-lg">
                               NT$ {item.price.toLocaleString()}
                             </div>
                           </div>
