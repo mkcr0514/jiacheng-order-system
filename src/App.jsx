@@ -717,11 +717,19 @@ const App = () => {
                           </div>
                         )}
 
-                        {/* 上半部：規格名稱 + 數量調整器（參考示範圖排版） */}
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="text-white text-lg font-bold">
-                            {product.name}
+                        {/* 左邊：規格+價格一組，右邊：調整器 */}
+                        <div className="flex items-center justify-between">
+                          {/* 左側：規格和價格資訊（上下排列） */}
+                          <div className="flex-1">
+                            <div className="text-white text-lg font-bold mb-1">
+                              {product.name}
+                            </div>
+                            <div className="text-gray-400 text-sm">
+                              NT$ {product.price} / {product.package}
+                            </div>
                           </div>
+
+                          {/* 右側：數量調整器 */}
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleQuantityChange(product.globalIndex, -1)}
@@ -742,14 +750,9 @@ const App = () => {
                           </div>
                         </div>
 
-                        {/* 價格資訊 */}
-                        <div className="text-gray-400 text-sm mb-3">
-                          NT$ {product.price} / {product.package}
-                        </div>
-
                         {/* 下半部：小計 + 箱數（有數量時才顯示） */}
                         {qty > 0 && (
-                          <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                          <div className="flex items-center justify-between pt-3 mt-3 border-t border-white/10">
                             <div className="text-gray-400 text-sm">
                               小計 NT$ {subtotal.toLocaleString()}
                             </div>
@@ -875,91 +878,55 @@ const App = () => {
                 <div>購物車是空的</div>
               </div>
             ) : (
-              <div className="space-y-6">
-                {/* 按品项分类分组 */}
-                {Object.entries(
-                  cart.reduce((groups, item) => {
-                    const category = item.product.category;
-                    if (!groups[category]) groups[category] = [];
-                    groups[category].push(item);
-                    return groups;
-                  }, {})
-                ).map(([category, items]) => (
-                  <div key={category} className="space-y-3">
-                    {/* 品项标题 */}
-                    <div className="text-blue-400 font-bold text-sm px-2 py-1 bg-blue-500/10 rounded-lg inline-block">
-                      {category}
-                    </div>
-
-                    {/* 该品项下的商品 */}
-                    {items.map(item => (
-                      <div
-                        key={item.id}
-                        className={`bg-white/5 rounded-xl p-4 border border-white/10 transition-all duration-400 ${
-                          removingItems.has(item.id) ? 'animate-remove-item' : ''
-                        }`}
-                      >
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex-1">
-                            {/* 规格名称 */}
-                            <div className="text-white font-bold text-lg mb-2">{item.product.name}</div>
-                            {/* 颜色 - 強調顯示 */}
-                            <div className="inline-block px-3 py-1.5 rounded-lg text-base font-bold"
-                              style={{
-                                backgroundColor:
-                                  item.color === '象牙' ? '#FFF8DC' :
-                                  item.color === '咖啡' ? '#8B4513' :
-                                  item.color === '白色' ? '#FFFFFF' :
-                                  item.color === '灰色' ? '#808080' :
-                                  '#000000',
-                                color:
-                                  item.color === '白色' || item.color === '象牙' ? '#000000' : '#FFFFFF'
-                              }}
-                            >
-                              {item.color}
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => handleRemoveCartItem(item.id)}
-                            className="p-2 hover:bg-red-500/20 rounded-lg transition-all"
-                          >
-                            <Trash2 className="w-4 h-4 text-red-400" />
-                          </button>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                          {/* 数量调整器 */}
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleUpdateCartItem(item.id, -1)}
-                              className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
-                            >
-                              −
-                            </button>
-                            <div className="min-w-[60px] text-center">
-                              <div className="text-white font-bold text-lg">{item.quantity}</div>
-                              <div className="text-xs text-gray-400">數量</div>
-                            </div>
-                            <button
-                              onClick={() => handleUpdateCartItem(item.id, 1)}
-                              className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
-                            >
-                              +
-                            </button>
-                          </div>
-
-                          {/* 箱数和金额 */}
-                          <div className="text-right">
-                            <div className="text-gray-400 text-sm mb-1">
-                              {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱
-                            </div>
-                            <div className="text-blue-400 font-bold text-lg">
-                              NT$ {item.price.toLocaleString()}
-                            </div>
-                          </div>
+              <div className="space-y-3">
+                {cart.map(item => (
+                  <div
+                    key={item.id}
+                    className={`bg-white/5 rounded-xl p-4 border border-white/10 transition-all duration-400 ${
+                      removingItems.has(item.id) ? 'animate-remove-item' : ''
+                    }`}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1">
+                        <div className="text-white font-bold">{item.product.name}</div>
+                        <div className="text-gray-400 text-sm mt-1">
+                          {item.color} | NT$ {item.product.price}
                         </div>
                       </div>
-                    ))}
+                      <button
+                        onClick={() => handleRemoveCartItem(item.id)}
+                        className="p-2 hover:bg-red-500/20 rounded-lg transition-all"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-400" />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleUpdateCartItem(item.id, -1)}
+                          className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+                        >
+                          −
+                        </button>
+                        <div className="min-w-[60px] text-center text-white font-bold">
+                          {item.quantity}
+                          <div className="text-xs text-gray-400">
+                            {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleUpdateCartItem(item.id, 1)}
+                          className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <div className="text-blue-400 font-bold">
+                        NT$ {item.price.toLocaleString()}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
