@@ -576,7 +576,7 @@ const App = () => {
         await navigator.share({
           files: [file],
           title: '嘉城工業訂購單',
-          text: `客戶：大金材料\n訂購日期：${dateStr}\n訂購金額：NT$ ${order.total.toLocaleString()}`
+          text: '你好，以下是本次的訂單'
         });
       } catch (error) {
         if (error.name !== 'AbortError') {
