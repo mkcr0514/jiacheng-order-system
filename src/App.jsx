@@ -920,9 +920,14 @@ const App = () => {
                           </button>
                         </div>
 
-                        {/* 第二行：數量調整器（左側） + 箱數和金額（右側） */}
+                        {/* 第二行：箱數和小計（左側） + 數量調整器（右側） */}
                         <div className="flex items-center justify-between">
-                          {/* 左側：數量調整器 */}
+                          {/* 左側：箱數和小計（單行顯示） */}
+                          <div className="text-gray-400 text-sm">
+                            共 {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱 | 小計 NT$ {item.price.toLocaleString()}
+                          </div>
+
+                          {/* 右側：數量調整器 */}
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleUpdateCartItem(item.id, -1)}
@@ -931,7 +936,7 @@ const App = () => {
                               −
                             </button>
                             <div className="min-w-[60px] text-center">
-                              <div className="text-white font-bold text-lg">{item.quantity}</div>
+                              <div className="text-blue-400 font-bold text-lg">{item.quantity}</div>
                               <div className="text-xs text-gray-400">數量</div>
                             </div>
                             <button
@@ -940,16 +945,6 @@ const App = () => {
                             >
                               +
                             </button>
-                          </div>
-
-                          {/* 右側：箱數和金額（垂直排列） */}
-                          <div className="text-right">
-                            <div className="text-gray-400 text-sm mb-1">
-                              {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱
-                            </div>
-                            <div className="text-blue-400 font-bold text-lg">
-                              NT$ {item.price.toLocaleString()}
-                            </div>
                           </div>
                         </div>
                       </div>
