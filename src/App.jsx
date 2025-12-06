@@ -900,11 +900,11 @@ const App = () => {
                         }`}
                       >
                         {/* 第一行：品項名稱 + 顏色tag（左側） + 刪除按鈕（右上角） */}
-                        <div className="flex items-start justify-between gap-4 mb-4">
+                        <div className="flex items-start justify-between gap-4 mb-3">
                           {/* 左側：品項名稱 + 顏色tag */}
                           <div className="flex items-center gap-3 flex-1 min-w-0">
-                            {/* 品項名稱 */}
-                            <div className="text-white text-xl font-bold">{item.product.name}</div>
+                            {/* 品項名稱 - 參考原版字體大小 */}
+                            <div className="text-white text-lg font-bold">{item.product.name}</div>
                             {/* 顏色tag - 參考訂單明細樣式 */}
                             <div className="text-gray-300 text-sm px-2 py-1 bg-white/10 rounded">
                               {item.color}
@@ -920,30 +920,36 @@ const App = () => {
                           </button>
                         </div>
 
-                        {/* 第二行：箱數和小計（左側） + 數量調整器（右側） */}
+                        {/* 第二行：數量調整器（左側） + 箱數和金額（右側） */}
                         <div className="flex items-center justify-between">
-                          {/* 左側：箱數和小計資訊 */}
-                          <div className="text-gray-400 text-sm">
-                            共 {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱 | 小計 NT$ {item.price.toLocaleString()}
-                          </div>
-
-                          {/* 右側：數量調整器 */}
-                          <div className="flex items-center gap-3">
+                          {/* 左側：數量調整器 */}
+                          <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleUpdateCartItem(item.id, -1)}
-                              className="w-12 h-12 rounded-full border-2 border-white/30 flex items-center justify-center text-white text-xl font-bold hover:bg-white/10 hover:border-white/50 transition-all active:scale-90"
+                              className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
                             >
                               −
                             </button>
-                            <div className="min-w-[50px] text-center">
-                              <div className="text-blue-400 font-bold text-3xl">{item.quantity}</div>
+                            <div className="min-w-[60px] text-center">
+                              <div className="text-white font-bold text-lg">{item.quantity}</div>
+                              <div className="text-xs text-gray-400">數量</div>
                             </div>
                             <button
                               onClick={() => handleUpdateCartItem(item.id, 1)}
-                              className="w-12 h-12 rounded-full border-2 border-white/30 flex items-center justify-center text-white text-xl font-bold hover:bg-white/10 hover:border-white/50 transition-all active:scale-90"
+                              className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
                             >
                               +
                             </button>
+                          </div>
+
+                          {/* 右側：箱數和金額（垂直排列） */}
+                          <div className="text-right">
+                            <div className="text-gray-400 text-sm mb-1">
+                              {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱
+                            </div>
+                            <div className="text-blue-400 font-bold text-lg">
+                              NT$ {item.price.toLocaleString()}
+                            </div>
                           </div>
                         </div>
                       </div>
