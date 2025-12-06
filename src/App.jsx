@@ -899,55 +899,52 @@ const App = () => {
                           removingItems.has(item.id) ? 'animate-remove-item' : ''
                         }`}
                       >
-                        {/* 第一行：品項名稱 + 顏色 + 右側操作區（數量調整 + 刪除） */}
-                        <div className="flex items-start justify-between gap-4 mb-3">
-                          {/* 左側：品項名稱和顏色 */}
-                          <div className="flex-1 min-w-0">
-                            {/* 品項名稱 - 第三優先 */}
-                            <div className="text-white text-xl font-bold mb-2">{item.product.name}</div>
-                            {/* 顏色tag - 第四優先，參考訂單明細樣式 */}
-                            <div className="text-gray-300 text-sm px-2 py-1 bg-white/10 rounded inline-block">
+                        {/* 第一行：品項名稱 + 顏色tag（左側） + 刪除按鈕（右上角） */}
+                        <div className="flex items-start justify-between gap-4 mb-4">
+                          {/* 左側：品項名稱 + 顏色tag */}
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            {/* 品項名稱 */}
+                            <div className="text-white text-xl font-bold">{item.product.name}</div>
+                            {/* 顏色tag - 參考訂單明細樣式 */}
+                            <div className="text-gray-300 text-sm px-2 py-1 bg-white/10 rounded">
                               {item.color}
                             </div>
                           </div>
 
-                          {/* 右側：操作區（數量調整 + 刪除） */}
-                          <div className="flex flex-col items-end gap-3">
-                            {/* 數量調整器 - 第一優先，最突出 */}
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => handleUpdateCartItem(item.id, -1)}
-                                className="w-10 h-10 rounded-full border-2 border-white/30 flex items-center justify-center text-white text-xl font-bold hover:bg-white/10 hover:border-white/50 transition-all active:scale-90"
-                              >
-                                −
-                              </button>
-                              <div className="min-w-[50px] text-center">
-                                <div className="text-white font-bold text-2xl">{item.quantity}</div>
-                              </div>
-                              <button
-                                onClick={() => handleUpdateCartItem(item.id, 1)}
-                                className="w-10 h-10 rounded-full border-2 border-white/30 flex items-center justify-center text-white text-xl font-bold hover:bg-white/10 hover:border-white/50 transition-all active:scale-90"
-                              >
-                                +
-                              </button>
-                            </div>
-
-                            {/* 刪除按鈕 - 第二優先 */}
-                            <button
-                              onClick={() => handleRemoveCartItem(item.id)}
-                              className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-all flex items-center gap-2"
-                            >
-                              <Trash2 className="w-4 h-4 text-red-400" />
-                              <span className="text-red-400 text-sm font-medium">刪除</span>
-                            </button>
-                          </div>
+                          {/* 右上角：刪除按鈕（只有圖標） */}
+                          <button
+                            onClick={() => handleRemoveCartItem(item.id)}
+                            className="p-2 hover:bg-red-500/20 rounded-lg transition-all flex-shrink-0"
+                          >
+                            <Trash2 className="w-5 h-5 text-red-400" />
+                          </button>
                         </div>
 
-                        {/* 第二行：次要資訊（單價、箱數、小計） */}
-                        <div className="flex items-center justify-between text-sm text-gray-400 pt-3 border-t border-white/10">
-                          <div>單價 NT$ {item.product.price}</div>
-                          <div>{Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱</div>
-                          <div className="text-gray-300">小計 <span className="font-medium">NT$ {item.price.toLocaleString()}</span></div>
+                        {/* 第二行：箱數和小計（左側） + 數量調整器（右側） */}
+                        <div className="flex items-center justify-between">
+                          {/* 左側：箱數和小計資訊 */}
+                          <div className="text-gray-400 text-sm">
+                            共 {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱 | 小計 NT$ {item.price.toLocaleString()}
+                          </div>
+
+                          {/* 右側：數量調整器 */}
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => handleUpdateCartItem(item.id, -1)}
+                              className="w-12 h-12 rounded-full border-2 border-white/30 flex items-center justify-center text-white text-xl font-bold hover:bg-white/10 hover:border-white/50 transition-all active:scale-90"
+                            >
+                              −
+                            </button>
+                            <div className="min-w-[50px] text-center">
+                              <div className="text-blue-400 font-bold text-3xl">{item.quantity}</div>
+                            </div>
+                            <button
+                              onClick={() => handleUpdateCartItem(item.id, 1)}
+                              className="w-12 h-12 rounded-full border-2 border-white/30 flex items-center justify-center text-white text-xl font-bold hover:bg-white/10 hover:border-white/50 transition-all active:scale-90"
+                            >
+                              +
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
