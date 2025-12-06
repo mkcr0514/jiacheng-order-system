@@ -922,9 +922,9 @@ const App = () => {
 
                         {/* 第二行：箱數和小計（左側） + 數量調整器（右側） */}
                         <div className="flex items-center justify-between">
-                          {/* 左側：箱數和小計（單行顯示） */}
+                          {/* 左側：箱數和小計（單行顯示，加大間距） */}
                           <div className="text-gray-400 text-sm">
-                            共 {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱 | 小計 NT$ {item.price.toLocaleString()}
+                            共 {Math.ceil(item.quantity / getUnitSize(item.product.package))} 箱  |  小計 NT$ {item.price.toLocaleString()}
                           </div>
 
                           {/* 右側：數量調整器 */}
@@ -937,7 +937,6 @@ const App = () => {
                             </button>
                             <div className="min-w-[60px] text-center">
                               <div className="text-blue-400 font-bold text-lg">{item.quantity}</div>
-                              <div className="text-xs text-gray-400">數量</div>
                             </div>
                             <button
                               onClick={() => handleUpdateCartItem(item.id, 1)}
