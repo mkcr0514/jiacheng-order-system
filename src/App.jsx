@@ -476,13 +476,15 @@ const App = () => {
         const orderItem = order.items.find(item => {
           if (!item || !item.product || !item.product.name || item.color !== color) return false;
 
-          // 精确匹配或部分匹配
-          const orderName = item.product.name.trim();
-          const templateModel = templateProduct.model ? templateProduct.model.trim() : '';
+          // 將多餘空格壓縮成單一空格再比對（修復模板中如 "FA-70        (83公分)" 的多空格問題）
+          const orderName = item.product.name.trim().replace(/\s+/g, ' ');
+          const templateModel = templateProduct.model
+            ? templateProduct.model.trim().replace(/\s+/g, ' ')
+            : '';
 
           return templateModel === orderName ||
                  templateModel.startsWith(orderName + ' ') ||
-                 templateModel.startsWith(orderName + '  ');
+                 templateModel.startsWith(orderName + '(');
         });
 
         const quantity = orderItem ? orderItem.quantity : '';
