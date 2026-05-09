@@ -113,7 +113,7 @@ test.describe('軟管類品項', () => {
     await page.goto('/');
     await page.locator('text=自由接頭').first().click();
     await expect(page.locator('text=FA-70')).toBeVisible();
-    await expect(page.locator('text=FB-80')).toBeVisible();
+    await expect(page.locator('text=FB-80 (83公分)')).toBeVisible();
   });
 
   test('FA-70 數量調整正確（10支一箱，點+一次→10）', async ({ page }) => {
