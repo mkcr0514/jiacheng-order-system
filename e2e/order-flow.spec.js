@@ -3,7 +3,7 @@
  * 使用 Playwright 以 iPhone 13 規格執行
  */
 
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 // ══════════════════════════════════════════
 // 1. 首頁渲染
