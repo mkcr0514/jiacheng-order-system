@@ -265,15 +265,30 @@ const App = () => {
     const category = CATEGORIES.find(c => c.id === categoryId);
     if (!category) return [];
 
+    // 取得目前顏色在 Excel 模板裡有的型號列表
+    const templateProducts = EXCEL_TEMPLATE_PRODUCTS[selectedColor] || [];
+    const templateModels = templateProducts.map(p =>
+      p.model ? p.model.trim().replace(/\s+/g, ' ') : ''
+    );
+
     const products = [];
 
     BASE_PRODUCTS.forEach((product, index) => {
       if (category.subcategories.includes(product.category)) {
-        products.push({
-          ...product,
-          color: selectedColor,
-          globalIndex: `${selectedColor}-${index}`
-        });
+        // 只顯示該顏色模板裡有的品項
+        const productName = product.name.trim().replace(/\s+/g, ' ');
+        const inTemplate = templateModels.some(model =>
+          model === productName ||
+          model.startsWith(productName + ' ') ||
+          model.startsWith(productName + '(')
+        );
+        if (inTemplate) {
+          products.push({
+            ...product,
+            color: selectedColor,
+            globalIndex: `${selectedColor}-${index}`
+          });
+        }
       }
     });
 
