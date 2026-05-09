@@ -7,7 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:mobile": "playwright test --project='iPhone 13' --project='Galaxy S9+'",
+    "test:all": "jest && playwright test"
   },
   "dependencies": {
     "lucide-react": "^0.553.0",
